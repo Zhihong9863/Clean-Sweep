@@ -1,0 +1,11 @@
+cleanSweep:
+  battery:
+    lowThreshold: 10       # Return to base when battery falls below 10%
+    fullCharge: 100        # Full charge value
+  dirt:
+    sensitivity: 0.5       # Sensitivity for detecting dirt
+  ai:
+    learningRate: 0.1      # Learning rate for the AI model
+    discountFactor: 0.9    # Discount factor for future rewards
+  floor:
+    gridSize: 10           # Size of the grid (10x10 grid cells)
