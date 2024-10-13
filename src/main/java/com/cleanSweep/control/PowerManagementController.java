@@ -1,34 +1,39 @@
+/*
+ * 1.3 PowerManagementController
+Folder: /src/main/java/com/cleanSweep/control/
+Description: Manages the power consumption of the Clean Sweep robot. It tracks battery life and determines when to return to the charging station.
+Parameters:
+int batteryLife: The current battery level (starts at 250 units).
+SensorSimulator sensorSimulator: Used to determine the power cost of moving across different surface types.
+Methods:
+PowerManagementController(SensorSimulator sensorSimulator): Constructor to initialize power management.
+void consumePower(int x, int y): Consumes battery power based on the surface at the given coordinates.
+boolean shouldReturnToBase(): Returns true if the battery level is low (below 10%).
+int getBatteryLife(): Returns the remaining battery life.
+void recharge(): Recharges the battery to full (250 units).
+ */
 package com.cleanSweep.control;
 
-import com.cleanSweep.sensor.SensorSimulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.cleanSweep.interfaces.Sensor;
+import com.cleanSweep.logging.ActivityLogger;
 
 public class PowerManagementController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PowerManagementController.class);
+    private int batteryLife = 250;
+    private Sensor sensor;
+    private ActivityLogger activityLogger;
 
-    private int batteryLife = 250;  // Initial full battery capacity
-    private SensorSimulator sensorSimulator;
-    private boolean returningToBase = false;
-
-    public PowerManagementController(SensorSimulator sensorSimulator) {
-        this.sensorSimulator = sensorSimulator;
+    public PowerManagementController(Sensor sensor, ActivityLogger activityLogger) {
+        this.sensor = sensor;
+        this.activityLogger = activityLogger;
     }
 
-    // Consumes power based on surface type
     public void consumePower(int x, int y) {
-        if (batteryLife <= 0) {
-            logger.warn("Battery drained. Shutting down.");
-            return;
-        }
-
-        int powerConsumed = sensorSimulator.getSurfacePowerCost(x, y);
+        int powerConsumed = sensor.getSurfacePowerCost(x, y);
         batteryLife -= powerConsumed;
-        logger.info("Consumed " + powerConsumed + " units of power. Battery remaining: " + batteryLife);
+        activityLogger.logBatteryUsage(batteryLife);
     }
 
-    // Checks if it's time to return to the charging station
     public boolean shouldReturnToBase() {
         return batteryLife <= (250 / 10);  // Return to base when battery is below 10%
     }
@@ -38,15 +43,7 @@ public class PowerManagementController {
     }
 
     public void recharge() {
-        batteryLife = 250;  // Recharges to full
-        logger.info("Battery recharged to full.");
-    }
-
-    public void setReturningToBase(boolean returningToBase) {
-        this.returningToBase = returningToBase;
-    }
-
-    public boolean isReturningToBase() {
-        return returningToBase;
+        batteryLife = 250;
+        activityLogger.logRecharge();
     }
 }
