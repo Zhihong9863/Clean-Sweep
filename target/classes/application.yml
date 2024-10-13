@@ -8,4 +8,4 @@ cleanSweep:
     learningRate: 0.1      # Learning rate for the AI model
     discountFactor: 0.9    # Discount factor for future rewards
   floor:
-    gridSize: 10           # Size of the grid (10x10 grid cells)
+    gridSize: 25           # Size of the grid (25x25 grid cells)
