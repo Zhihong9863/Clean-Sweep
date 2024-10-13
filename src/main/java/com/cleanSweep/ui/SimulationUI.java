@@ -1,5 +1,6 @@
 package com.cleanSweep.ui;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -12,6 +13,9 @@ public class SimulationUI extends Application {
 
     private Canvas canvas;
     private GraphicsContext gc;
+    private double robotX = 375;
+    private double robotY = 275;
+    private double robotSpeed = 1;
 
     public static void main(String[] args) {
         launch(args);
@@ -33,13 +37,37 @@ public class SimulationUI extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Render the initial environment
-        renderEnvironment();
+        // Start the animation loop
+        startAnimation();
     }
 
     private void setupCanvas() {
         canvas = new Canvas(800, 600);
         gc = canvas.getGraphicsContext2D();
+    }
+
+    private void startAnimation() {
+        AnimationTimer timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                update();
+                renderEnvironment();
+            }
+        };
+        timer.start();
+    }
+
+    private void update() {
+        // Simple movement logic: move right, then down, then left, then up
+        if (robotX < 750 && robotY == 275) {
+            robotX += robotSpeed;
+        } else if (robotX >= 750 && robotY < 525) {
+            robotY += robotSpeed;
+        } else if (robotX > 375 && robotY >= 525) {
+            robotX -= robotSpeed;
+        } else if (robotX <= 375 && robotY > 275) {
+            robotY -= robotSpeed;
+        }
     }
 
     private void renderEnvironment() {
@@ -56,10 +84,6 @@ public class SimulationUI extends Application {
             gc.strokeLine(0, i, canvas.getWidth(), i);
         }
 
-        // Draw a robot
-        gc.setFill(Color.BLUE);
-        gc.fillOval(375, 275, 50, 50); // Draw a circle representing the robot
-
         // Draw obstacles
         gc.setFill(Color.RED);
         gc.fillRect(150, 150, 50, 50); // Example obstacle
@@ -69,5 +93,9 @@ public class SimulationUI extends Application {
         gc.setFill(Color.BROWN);
         gc.fillOval(200, 200, 20, 20); // Example dirt
         gc.fillOval(500, 300, 20, 20); // Example dirt
+
+        // Draw the robot
+        gc.setFill(Color.BLUE);
+        gc.fillOval(robotX, robotY, 50, 50); // Draw a circle representing the robot
     }
 }
