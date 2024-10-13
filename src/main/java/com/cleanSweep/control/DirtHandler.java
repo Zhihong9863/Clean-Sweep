@@ -33,9 +33,9 @@ public class DirtHandler {
         if (sensor.isDirtPresent(x, y) && currentDirt < dirtCapacity) {
             sensor.cleanDirt(x, y);
             currentDirt++;
-            activityLogger.logDirtCleaned(x, y);
+            activityLogger.logCleaning(x, y); // Updated method name
         } else if (currentDirt >= dirtCapacity) {
-            activityLogger.logDirtFull();
+            activityLogger.logDirtFull();   
         } else {
             activityLogger.logNoDirtAtPosition(x, y);
         }

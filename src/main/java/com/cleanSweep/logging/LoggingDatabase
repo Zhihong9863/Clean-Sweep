@@ -22,17 +22,19 @@ public class LoggingDatabase {
     private EntityManagerFactory emf;
     private EntityManager em;
 
-    // Singleton pattern for the database logger
+    // Private constructor to prevent instantiation
     private LoggingDatabase() {
-        emf = Persistence.createEntityManagerFactory("clean_sweep_logs");
-        em = emf.createEntityManager();
+        // Initialization code here
     }
 
+    // Holder class for the singleton instance
+    private static class Holder {
+        private static final LoggingDatabase INSTANCE = new LoggingDatabase();
+    }
+
+    // Public method to provide access to the singleton instance
     public static LoggingDatabase getInstance() {
-        if (instance == null) {
-            instance = new LoggingDatabase();
-        }
-        return instance;
+        return Holder.INSTANCE;
     }
 
     // Save log event to the database
