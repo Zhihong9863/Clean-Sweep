@@ -47,7 +47,7 @@ public class SimulationUI extends Application {
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // Example rendering: Draw a simple grid
+        // Draw a simple grid
         gc.setStroke(Color.LIGHTGRAY);
         for (int i = 0; i < canvas.getWidth(); i += 50) {
             gc.strokeLine(i, 0, i, canvas.getHeight());
@@ -56,8 +56,18 @@ public class SimulationUI extends Application {
             gc.strokeLine(0, i, canvas.getWidth(), i);
         }
 
-        // Example rendering: Draw a robot
+        // Draw a robot
         gc.setFill(Color.BLUE);
         gc.fillOval(375, 275, 50, 50); // Draw a circle representing the robot
+
+        // Draw obstacles
+        gc.setFill(Color.RED);
+        gc.fillRect(150, 150, 50, 50); // Example obstacle
+        gc.fillRect(300, 400, 50, 50); // Example obstacle
+
+        // Draw dirt
+        gc.setFill(Color.BROWN);
+        gc.fillOval(200, 200, 20, 20); // Example dirt
+        gc.fillOval(500, 300, 20, 20); // Example dirt
     }
 }
