@@ -1,3 +1,4 @@
+com/cleanSweep/ui/SimulationUI$1.class
 com/cleanSweep/ui/HUDController.class
 com/cleanSweep/ai/QLearning.class
 com/cleanSweep/logging/LogEntry.class
