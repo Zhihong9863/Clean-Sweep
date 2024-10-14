@@ -1,28 +1,23 @@
 package com.cleanSweep.visualization;
 
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import com.cleanSweep.control.NavigationController;
 
 public class RobotVisualizer {
 
-    private static final int CELL_SIZE = 25;  // Match the cell size used in FloorPlanVisualizer
-    private GraphicsContext gc;
+    private int cellSize;
+    private NavigationController navigationController;
 
-    public RobotVisualizer(GraphicsContext gc) {
-        this.gc = gc;
+    public RobotVisualizer(int cellSize, NavigationController navigationController) {
+        this.cellSize = cellSize;
+        this.navigationController = navigationController;
     }
 
-    // Draws the robot at the given grid coordinates (x, y)
-    public void renderRobot(int x, int y) {
-        System.out.println("Rendering robot at: (" + x + ", " + y + ")");
-        System.out.println("Canvas size: " + gc.getCanvas().getWidth() + "x" + gc.getCanvas().getHeight());
+    public void render(GraphicsContext gc) {
+        int[] position = navigationController.getCurrentPosition();
         gc.setFill(Color.BLUE);
-        gc.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE); // Simplified rendering logic
-    }
-
-    // Add this method to render the charging station
-    public void renderChargingStation(int x, int y) {
-        gc.setFill(Color.GREEN); // Assuming green for the charging station
-        gc.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        gc.fillOval(position[0] * cellSize, position[1] * cellSize, cellSize, cellSize);
     }
 }

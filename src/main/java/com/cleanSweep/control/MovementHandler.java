@@ -11,42 +11,39 @@ boolean canMove(int x, int y): Checks if the robot can move to the specified coo
 
 package com.cleanSweep.control;
 
-import com.cleanSweep.interfaces.Sensor;
+import com.cleanSweep.control.DirtHandler;
+import com.cleanSweep.control.PowerManagementController;
 
 public class MovementHandler {
 
     private NavigationController navigationController;
     private DirtHandler dirtHandler;
-    private PowerManagementController powerController;
-    private Sensor sensor;
+    private PowerManagementController powerManagementController;
 
-    public MovementHandler(NavigationController navigationController, DirtHandler dirtHandler, PowerManagementController powerController) {
+    public MovementHandler(NavigationController navigationController, DirtHandler dirtHandler, PowerManagementController powerManagementController) {
         this.navigationController = navigationController;
         this.dirtHandler = dirtHandler;
-        this.powerController = powerController;
+        this.powerManagementController = powerManagementController;
     }
 
-    public void moveAndClean() {
-        try {
-            // Example: Move right, clean the location, consume power
-            navigationController.moveRight();
-            int[] position = navigationController.getCurrentPosition();
-            dirtHandler.cleanDirt(position[0], position[1]);
-            powerController.consumePower(position[0], position[1]);
-
-            if (dirtHandler.isCapacityFull() || powerController.shouldReturnToBase()) {
-                returnToBase();
-            }
-
-            // Add a delay to slow down the movement
-            Thread.sleep(500); // 500 milliseconds delay
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    public void moveRight() {
+        navigationController.moveRight();
+        postMoveActions();
     }
 
-    public void returnToBase() {
-        // Logic to navigate back to base when required
-        // (This would involve more sophisticated logic, like pathfinding)
+    public void moveLeft() {
+        navigationController.moveLeft();
+        postMoveActions();
+    }
+
+    public void moveDown() {
+        navigationController.moveDown();
+        postMoveActions();
+    }
+
+    private void postMoveActions() {
+        int[] position = navigationController.getCurrentPosition();
+        dirtHandler.cleanDirt(position[0], position[1]);
+        powerManagementController.consumePower();
     }
 }

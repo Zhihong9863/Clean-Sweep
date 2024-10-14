@@ -14,42 +14,46 @@ int getCurrentDirt(): Returns the current amount of dirt collected.
 */
 package com.cleanSweep.control;
 
-import com.cleanSweep.interfaces.Sensor;
-import com.cleanSweep.logging.ActivityLogger;
+
+import java.util.Random;
 
 public class DirtHandler {
 
-    private Sensor sensor;
-    private int currentDirt = 0;
-    private int dirtCapacity = 50;
-    private ActivityLogger activityLogger;
+    private boolean[][] dirtGrid;
+    private int maxCapacity = 100;
+    private int currentCapacity = 0;
 
-    public DirtHandler(Sensor sensor, ActivityLogger activityLogger) {
-        this.sensor = sensor;
-        this.activityLogger = activityLogger;
+    public DirtHandler(int gridWidth, int gridHeight) {
+        dirtGrid = new boolean[gridWidth][gridHeight];
+        generateDirt(gridWidth, gridHeight);
     }
 
-    public void cleanDirt(int x, int y) {
-        if (sensor.isDirtPresent(x, y) && currentDirt < dirtCapacity) {
-            sensor.cleanDirt(x, y);
-            currentDirt++;
-            activityLogger.logCleaning(x, y);
-        } else if (currentDirt >= dirtCapacity) {
-            activityLogger.logDirtFull();
-        } else {
-            activityLogger.logNoDirtAtPosition(x, y);
+    private void generateDirt(int gridWidth, int gridHeight) {
+        Random rand = new Random();
+        for (int x = 0; x < gridWidth; x++) {
+            for (int y = 0; y < gridHeight; y++) {
+                dirtGrid[x][y] = rand.nextBoolean();
+            }
         }
     }
 
-    public boolean isCapacityFull() {
-        return currentDirt >= dirtCapacity;
+    public boolean isDirty(int x, int y) {
+        return dirtGrid[x][y];
     }
 
-    public int getCurrentDirt() {
-        return currentDirt;
+    public void cleanDirt(int x, int y) {
+        if (dirtGrid[x][y] && currentCapacity < maxCapacity) {
+            dirtGrid[x][y] = false;
+            currentCapacity++;
+            System.out.println("Cleaned dirt at (" + x + ", " + y + ")");
+        }
     }
 
-    public int getDirtCapacity() {
-        return dirtCapacity;
+    public int getCurrentCapacity() {
+        return currentCapacity;
+    }
+
+    public int getMaxCapacity() {
+        return maxCapacity;
     }
 }

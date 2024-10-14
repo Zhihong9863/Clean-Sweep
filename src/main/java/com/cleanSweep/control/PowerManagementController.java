@@ -14,36 +14,20 @@ void recharge(): Recharges the battery to full (250 units).
  */
 package com.cleanSweep.control;
 
-import com.cleanSweep.interfaces.Sensor;
-import com.cleanSweep.logging.ActivityLogger;
-
 public class PowerManagementController {
 
-    private int batteryLife = 250;
-    private Sensor sensor;
-    private ActivityLogger activityLogger;
+    private int batteryLevel = 100;
 
-    public PowerManagementController(Sensor sensor, ActivityLogger activityLogger) {
-        this.sensor = sensor;
-        this.activityLogger = activityLogger;
+    public void consumePower() {
+        batteryLevel--;
+        System.out.println("Battery level: " + batteryLevel + "%");
+        if (batteryLevel <= 0) {
+            System.out.println("Battery depleted. Returning to charging station.");
+            // Implement return to charging logic
+        }
     }
 
-    public void consumePower(int x, int y) {
-        int powerConsumed = sensor.getSurfacePowerCost(x, y);
-        batteryLife -= powerConsumed;
-        activityLogger.logBatteryUsage(batteryLife);
-    }
-
-    public boolean shouldReturnToBase() {
-        return batteryLife <= (250 / 10);  // Return to base when battery is below 10%
-    }
-
-    public int getBatteryLife() {
-        return batteryLife;
-    }
-
-    public void recharge() {
-        batteryLife = 250;
-        activityLogger.logRecharge();
+    public int getBatteryLevel() {
+        return batteryLevel;
     }
 }
