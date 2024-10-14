@@ -19,6 +19,7 @@ package com.cleanSweep.control;
 
 import com.cleanSweep.sensor.SensorSimulator;
 import com.cleanSweep.visualization.RobotVisualizer;
+import com.cleanSweep.logging.ActivityLogger;
 
 public class NavigationController {
 
@@ -26,45 +27,89 @@ public class NavigationController {
     private int currentY;
     private SensorSimulator sensorSimulator;
     private RobotVisualizer robotVisualizer;
+    private ActivityLogger activityLogger; // Declare the activityLogger
     private static final int GRID_WIDTH = 20;  // Assuming a 20x20 grid
     private static final int GRID_HEIGHT = 20;
+    private boolean[][] visitedGrid = new boolean[GRID_WIDTH][GRID_HEIGHT];
 
-    public NavigationController(int startX, int startY, SensorSimulator sensorSimulator, RobotVisualizer robotVisualizer) {
+    public NavigationController(int startX, int startY, SensorSimulator sensorSimulator, RobotVisualizer robotVisualizer, ActivityLogger activityLogger) {
         this.currentX = startX;
         this.currentY = startY;
         this.sensorSimulator = sensorSimulator;
         this.robotVisualizer = robotVisualizer;
+        this.activityLogger = activityLogger; // Initialize here
     }
 
     public void moveUp() {
-        if (currentY > 0 && !sensorSimulator.isObstacle(currentX, currentY - 1)) {
+        if (currentY > 0 && !sensorSimulator.isObstacle(currentX, currentY - 1) && !sensorSimulator.isStair(currentX, currentY - 1)) {
             currentY--;
+            updateGrid(currentX, currentY);
             robotVisualizer.renderRobot(currentX, currentY);
+            activityLogger.logMovement(currentX, currentY, "up");
+        } else {
+            activityLogger.logObstacleDetected(true);
+            checkShutdown();
         }
     }
 
     public void moveDown() {
-        if (currentY < GRID_HEIGHT - 1 && !sensorSimulator.isObstacle(currentX, currentY + 1)) {
+        if (currentY < GRID_HEIGHT - 1 && !sensorSimulator.isObstacle(currentX, currentY + 1) && !sensorSimulator.isStair(currentX, currentY + 1)) {
             currentY++;
+            updateGrid(currentX, currentY);
             robotVisualizer.renderRobot(currentX, currentY);
+            activityLogger.logMovement(currentX, currentY, "down");
+        } else {
+            activityLogger.logObstacleDetected(true);
+            checkShutdown();
         }
     }
 
     public void moveLeft() {
-        if (currentX > 0 && !sensorSimulator.isObstacle(currentX - 1, currentY)) {
+        if (currentX > 0 && !sensorSimulator.isObstacle(currentX - 1, currentY) && !sensorSimulator.isStair(currentX - 1, currentY)) {
             currentX--;
+            updateGrid(currentX, currentY);
             robotVisualizer.renderRobot(currentX, currentY);
+            activityLogger.logMovement(currentX, currentY, "left");
+        } else {
+            activityLogger.logObstacleDetected(true);
+            checkShutdown();
         }
     }
 
     public void moveRight() {
-        if (currentX < GRID_WIDTH - 1 && !sensorSimulator.isObstacle(currentX + 1, currentY)) {
+        if (currentX < GRID_WIDTH - 1 && !sensorSimulator.isObstacle(currentX + 1, currentY) && !sensorSimulator.isStair(currentX + 1, currentY)) {
             currentX++;
+            updateGrid(currentX, currentY);
             robotVisualizer.renderRobot(currentX, currentY);
+            activityLogger.logMovement(currentX, currentY, "right");
+        } else {
+            activityLogger.logObstacleDetected(true);
+            checkShutdown();
         }
     }
 
     public int[] getCurrentPosition() {
         return new int[]{currentX, currentY};
+    }
+
+    private void checkShutdown() {
+        boolean canMove = (currentY > 0 && !sensorSimulator.isObstacle(currentX, currentY - 1) && !sensorSimulator.isStair(currentX, currentY - 1)) ||
+                          (currentY < GRID_HEIGHT - 1 && !sensorSimulator.isObstacle(currentX, currentY + 1) && !sensorSimulator.isStair(currentX, currentY + 1)) ||
+                          (currentX > 0 && !sensorSimulator.isObstacle(currentX - 1, currentY) && !sensorSimulator.isStair(currentX - 1, currentY)) ||
+                          (currentX < GRID_WIDTH - 1 && !sensorSimulator.isObstacle(currentX + 1, currentY) && !sensorSimulator.isStair(currentX + 1, currentY));
+
+        if (!canMove) {
+            shutdown();
+        }
+    }
+
+    private void shutdown() {
+        System.out.println("Shutting down: No available moves.");
+        // Additional shutdown logic
+    }
+
+    private void updateGrid(int x, int y) {
+        visitedGrid[x][y] = true;
+        // You can add more logic here to update the state of the cell (e.g., obstacle, stair)
     }
 }

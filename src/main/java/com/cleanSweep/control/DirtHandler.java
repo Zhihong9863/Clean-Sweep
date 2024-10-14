@@ -19,9 +19,9 @@ import com.cleanSweep.logging.ActivityLogger;
 
 public class DirtHandler {
 
-    private int currentDirt = 0;
-    private final int dirtCapacity = 50;
     private Sensor sensor;
+    private int currentDirt = 0;
+    private int dirtCapacity = 50;
     private ActivityLogger activityLogger;
 
     public DirtHandler(Sensor sensor, ActivityLogger activityLogger) {
@@ -33,9 +33,9 @@ public class DirtHandler {
         if (sensor.isDirtPresent(x, y) && currentDirt < dirtCapacity) {
             sensor.cleanDirt(x, y);
             currentDirt++;
-            activityLogger.logCleaning(x, y); // Updated method name
+            activityLogger.logCleaning(x, y);
         } else if (currentDirt >= dirtCapacity) {
-            activityLogger.logDirtFull();   
+            activityLogger.logDirtFull();
         } else {
             activityLogger.logNoDirtAtPosition(x, y);
         }
