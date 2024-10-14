@@ -1,100 +1,119 @@
 package com.cleanSweep.ui;
 
-import com.cleanSweep.control.DirtHandler;
-import com.cleanSweep.control.NavigationController;
-import com.cleanSweep.sensor.SensorSimulator;
-import com.cleanSweep.visualization.RobotVisualizer;
-import com.cleanSweep.logging.ActivityLogger;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import com.cleanSweep.control.NavigationController;
+import com.cleanSweep.control.PowerManagementController;
+import com.cleanSweep.control.DirtHandler;
+import com.cleanSweep.sensor.SensorSimulator;
+import com.cleanSweep.visualization.FloorPlanVisualizer;
+import com.cleanSweep.visualization.RobotVisualizer;
 
 public class SimulationUI extends Application {
 
+    private static final int GRID_WIDTH = 10;
+    private static final int GRID_HEIGHT = 10;
+    private static final int CELL_SIZE = 50;
+
     private Canvas canvas;
     private GraphicsContext gc;
-    private SensorSimulator sensorSimulator;
-    private DirtHandler dirtHandler;
-    private NavigationController navigationController;
-    private RobotVisualizer robotVisualizer;
-    private ActivityLogger activityLogger;
-    private boolean movingRight;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    private SensorSimulator sensorSimulator;
+    private NavigationController navigationController;
+    private DirtHandler dirtHandler;
+    private PowerManagementController powerManagementController;
+
+    private FloorPlanVisualizer floorPlanVisualizer;
+    private RobotVisualizer robotVisualizer;
+
+    private AnimationTimer timer;
+    private long lastUpdate = 0;
+
+    private boolean movingRight = true;
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Clean Sweep Simulation");
-
         // Initialize components
-        setupCanvas();
-        sensorSimulator = new SensorSimulator();
-        robotVisualizer = new RobotVisualizer(gc);
-        activityLogger = new ActivityLogger();
+        sensorSimulator = new SensorSimulator(GRID_WIDTH, GRID_HEIGHT);
+        navigationController = new NavigationController(0, 0);
+        dirtHandler = new DirtHandler(GRID_WIDTH, GRID_HEIGHT);
+        powerManagementController = new PowerManagementController();
 
-        // Ensure SensorSimulator implements Sensor
-        dirtHandler = new DirtHandler(sensorSimulator, activityLogger);
+        floorPlanVisualizer = new FloorPlanVisualizer(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE, sensorSimulator, dirtHandler);
+        robotVisualizer = new RobotVisualizer(CELL_SIZE, navigationController);
 
-        navigationController = new NavigationController(7, 5, sensorSimulator, robotVisualizer, activityLogger);
+        // Set up canvas
+        canvas = new Canvas(GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE);
+        gc = canvas.getGraphicsContext2D();
 
-        // Create a layout and add the canvas
-        StackPane root = new StackPane();
-        root.getChildren().add(canvas);
+        // Set up controls
+        Button startButton = new Button("Start");
+        Button stopButton = new Button("Stop");
 
-        // Set up the scene
-        Scene scene = new Scene(root, 800, 600);
+        startButton.setOnAction(e -> timer.start());
+        stopButton.setOnAction(e -> timer.stop());
+
+        HBox controls = new HBox(10, startButton, stopButton);
+        controls.setPadding(new Insets(10));
+
+        // Layout
+        BorderPane root = new BorderPane();
+        root.setCenter(canvas);
+        root.setBottom(controls);
+
+        Scene scene = new Scene(root);
+
+        primaryStage.setTitle("Clean Sweep Simulation");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Start the animation loop
+        // Start animation
         startAnimation();
     }
 
-    private void setupCanvas() {
-        canvas = new Canvas(800, 600);
-        gc = canvas.getGraphicsContext2D();
-    }
-
     private void startAnimation() {
-        AnimationTimer timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                update();
-                renderEnvironment();
+                if (now - lastUpdate >= 500_000_000) { // 500 milliseconds
+                    update();
+                    render();
+                    lastUpdate = now;
+                }
             }
         };
-        timer.start();
     }
 
     private void update() {
         int[] position = navigationController.getCurrentPosition();
-        
+
         if (movingRight) {
-            if (position[0] < GRID_WIDTH - 1 && !sensorSimulator.isObstacle(position[0] + 1, position[1])) {
+            if (navigationController.canMoveRight(GRID_WIDTH, sensorSimulator)) {
                 navigationController.moveRight();
             } else {
                 movingRight = false;
-                if (position[1] < GRID_HEIGHT - 1 && !sensorSimulator.isObstacle(position[0], position[1] + 1)) {
+                if (navigationController.canMoveDown(GRID_HEIGHT, sensorSimulator)) {
                     navigationController.moveDown();
-                } else if (position[0] > 0 && !sensorSimulator.isObstacle(position[0] - 1, position[1])) {
+                } else if (navigationController.canMoveLeft(sensorSimulator)) {
                     navigationController.moveLeft();
                 }
             }
         } else {
-            if (position[0] > 0 && !sensorSimulator.isObstacle(position[0] - 1, position[1])) {
+            if (navigationController.canMoveLeft(sensorSimulator)) {
                 navigationController.moveLeft();
             } else {
                 movingRight = true;
-                if (position[1] < GRID_HEIGHT - 1 && !sensorSimulator.isObstacle(position[0], position[1] + 1)) {
+                if (navigationController.canMoveDown(GRID_HEIGHT, sensorSimulator)) {
                     navigationController.moveDown();
-                } else if (position[0] < GRID_WIDTH - 1 && !sensorSimulator.isObstacle(position[0] + 1, position[1])) {
+                } else if (navigationController.canMoveRight(GRID_WIDTH, sensorSimulator)) {
                     navigationController.moveRight();
                 }
             }
@@ -103,49 +122,21 @@ public class SimulationUI extends Application {
         // Clean the current position
         dirtHandler.cleanDirt(position[0], position[1]);
 
-        // Add a delay to slow down the movement
-        try {
-            Thread.sleep(500); // 500 milliseconds delay
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // Update power management
+        powerManagementController.consumePower();
     }
 
-    private void renderEnvironment() {
-        // Clear the canvas
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    private void render() {
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        // Draw a complete grid
-        gc.setStroke(Color.LIGHTGRAY);
-        for (int i = 0; i <= canvas.getWidth(); i += 50) { // Include right edge
-            gc.strokeLine(i, 0, i, canvas.getHeight());
-        }
-        for (int i = 0; i <= canvas.getHeight(); i += 50) { // Include bottom edge
-            gc.strokeLine(0, i, canvas.getWidth(), i);
-        }
+        // Draw environment
+        floorPlanVisualizer.render(gc);
 
-        // Draw obstacles
-        gc.setFill(Color.RED);
-        gc.fillRect(150, 150, 50, 50); // Example obstacle
-        gc.fillRect(300, 400, 50, 50); // Example obstacle
-
-        // Draw dirt
-        gc.setFill(Color.BROWN);
-        for (int x = 0; x < 20; x++) {
-            for (int y = 0; y < 20; y++) {
-                if (sensorSimulator.isDirtPresent(x, y)) {
-                    gc.fillOval(x * 50 + 15, y * 50 + 15, 20, 20);
-                }
-            }
-        }
-
-        // Draw the robot
-        int[] position = navigationController.getCurrentPosition();
-        gc.setFill(Color.BLUE);
-        gc.fillOval(position[0] * 50, position[1] * 50, 50, 50);
+        // Draw robot
+        robotVisualizer.render(gc);
     }
 
-    private static final int GRID_WIDTH = 20;  // Adjust based on your grid size
-    private static final int GRID_HEIGHT = 20;
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
