@@ -10,6 +10,7 @@ public class SensorSimulator implements Sensor {
     private Map<String, Boolean> dirtMap = new HashMap<>();
     private Map<String, Boolean> obstacleMap = new HashMap<>();
     private Map<String, String> surfaceMap = new HashMap<>();
+    private Map<String, Boolean> stairMap = new HashMap<>();
 
     public SensorSimulator() {
         // Initialize maps with some example data
@@ -27,6 +28,15 @@ public class SensorSimulator implements Sensor {
 
         surfaceMap.put("0,0", "bare floor");
         surfaceMap.put("1,0", "low-pile carpet");
+
+        // Initialize stair map with groups of three blocks
+        stairMap.put("2,3", true);
+        stairMap.put("2,4", true);
+        stairMap.put("2,5", true);
+
+        stairMap.put("5,7", true);
+        stairMap.put("5,8", true);
+        stairMap.put("5,9", true);
     }
 
     @Override
@@ -67,5 +77,10 @@ public class SensorSimulator implements Sensor {
             default:
                 return 0; // Unknown surface type
         }
+    }
+
+    // Method to check for stairs
+    public boolean isStair(int x, int y) {
+        return stairMap.getOrDefault(x + "," + y, false);
     }
 }

@@ -42,7 +42,7 @@ public class SimulationUI extends Application {
         // Ensure SensorSimulator implements Sensor
         dirtHandler = new DirtHandler(sensorSimulator, activityLogger);
 
-        navigationController = new NavigationController(7, 5, sensorSimulator, robotVisualizer);
+        navigationController = new NavigationController(7, 5, sensorSimulator, robotVisualizer, activityLogger);
 
         // Create a layout and add the canvas
         StackPane root = new StackPane();
@@ -83,8 +83,8 @@ public class SimulationUI extends Application {
                 movingRight = false;
                 if (position[1] < GRID_HEIGHT - 1 && !sensorSimulator.isObstacle(position[0], position[1] + 1)) {
                     navigationController.moveDown();
-                } else {
-                    movingRight = true; // Change direction if blocked
+                } else if (position[0] > 0 && !sensorSimulator.isObstacle(position[0] - 1, position[1])) {
+                    navigationController.moveLeft();
                 }
             }
         } else {
@@ -94,8 +94,8 @@ public class SimulationUI extends Application {
                 movingRight = true;
                 if (position[1] < GRID_HEIGHT - 1 && !sensorSimulator.isObstacle(position[0], position[1] + 1)) {
                     navigationController.moveDown();
-                } else {
-                    movingRight = false; // Change direction if blocked
+                } else if (position[0] < GRID_WIDTH - 1 && !sensorSimulator.isObstacle(position[0] + 1, position[1])) {
+                    navigationController.moveRight();
                 }
             }
         }

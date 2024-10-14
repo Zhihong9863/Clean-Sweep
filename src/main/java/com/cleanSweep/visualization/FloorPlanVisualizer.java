@@ -36,7 +36,9 @@ public class FloorPlanVisualizer {
                         break;
                 }
 
-                if (sensorSimulator.isObstacle(x, y)) {
+                if (sensorSimulator.isStair(x, y)) {
+                    gc.setFill(Color.ORANGE); // Color for stairs
+                } else if (sensorSimulator.isObstacle(x, y)) {
                     gc.setFill(Color.GRAY);
                 } else if (sensorSimulator.isDirtPresent(x, y)) {
                     gc.setFill(Color.RED);
