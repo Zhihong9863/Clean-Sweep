@@ -1,10 +1,16 @@
+com/cleanSweep/ui/SimulationUI$1.class
 com/cleanSweep/ui/HUDController.class
 com/cleanSweep/ai/QLearning.class
+com/cleanSweep/logging/LogEntry.class
+com/cleanSweep/ui/StatusPanel.class
 com/cleanSweep/sensor/SensorSimulator.class
+com/cleanSweep/control/DirtHandler.class
 com/cleanSweep/control/NavigationController.class
 com/cleanSweep/visualization/FloorPlanVisualizer.class
 com/cleanSweep/logging/ActivityLogger.class
+com/cleanSweep/control/MovementHandler.class
 com/cleanSweep/control/PowerManagementController.class
+com/cleanSweep/interfaces/Sensor.class
 com/cleanSweep/visualization/RobotVisualizer.class
 com/cleanSweep/ui/SimulationUI.class
 com/cleanSweep/control/DirtDetectionController.class

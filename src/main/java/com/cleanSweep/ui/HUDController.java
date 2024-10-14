@@ -3,22 +3,32 @@ package com.cleanSweep.ui;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-public class HUDController {
+import com.cleanSweep.control.NavigationController;
+import com.cleanSweep.control.PowerManagementController;
+import com.cleanSweep.control.DirtHandler;
+import com.cleanSweep.interfaces.Sensor;
+import com.cleanSweep.logging.ActivityLogger;
+
+public class HUDController extends VBox {
 
     private Label batteryLabel;
-    private Label statusLabel;
+    private Label dirtCapacityLabel;
+    private PowerManagementController powerManagementController;
+    private DirtHandler dirtHandler;
 
-    public HUDController(VBox hudBox) {
-        batteryLabel = new Label("Battery: 100%");
-        statusLabel = new Label("Status: Idle");
-        hudBox.getChildren().addAll(batteryLabel, statusLabel);
+    public HUDController(PowerManagementController powerManagementController, DirtHandler dirtHandler) {
+        this.powerManagementController = powerManagementController;
+        this.dirtHandler = dirtHandler;
+
+        batteryLabel = new Label();
+        dirtCapacityLabel = new Label();
+
+        this.getChildren().addAll(batteryLabel, dirtCapacityLabel);
+        update();
     }
 
-    public void updateBattery(int batteryLevel) {
-        batteryLabel.setText("Battery: " + batteryLevel + "%");
-    }
-
-    public void updateStatus(String status) {
-        statusLabel.setText("Status: " + status);
+    public void update() {
+        batteryLabel.setText("Battery: " + powerManagementController.getBatteryLevel() + "%");
+        dirtCapacityLabel.setText("Dirt Capacity: " + dirtHandler.getCurrentCapacity() + "/" + dirtHandler.getMaxCapacity());
     }
 }

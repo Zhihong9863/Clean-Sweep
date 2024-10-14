@@ -2,29 +2,43 @@ package com.cleanSweep.visualization;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import com.cleanSweep.control.DirtHandler;
+import com.cleanSweep.sensor.SensorSimulator;
+
 
 public class FloorPlanVisualizer {
 
-    private static final int CELL_SIZE = 50;  // Each cell is 50x50 pixels
     private int gridWidth;
     private int gridHeight;
+    private int cellSize;
+    private SensorSimulator sensorSimulator;
+    private DirtHandler dirtHandler;
 
-    private GraphicsContext gc;
-
-    public FloorPlanVisualizer(GraphicsContext gc, int gridWidth, int gridHeight) {
-        this.gc = gc;
+    public FloorPlanVisualizer(int gridWidth, int gridHeight, int cellSize, SensorSimulator sensorSimulator, DirtHandler dirtHandler) {
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
+        this.cellSize = cellSize;
+        this.sensorSimulator = sensorSimulator;
+        this.dirtHandler = dirtHandler;
     }
 
-    // Draws the grid-based floor plan
-    public void drawFloorPlan() {
-        gc.setStroke(Color.GRAY);  // Set grid lines color to gray
+    public void render(GraphicsContext gc) {
+        for (int x = 0; x < gridWidth; x++) {
+            for (int y = 0; y < gridHeight; y++) {
+                gc.setStroke(Color.GRAY);
+                gc.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
 
-        // Draw the grid (10x10 cells for now)
-        for (int i = 0; i < gridWidth; i++) {
-            for (int j = 0; j < gridHeight; j++) {
-                gc.strokeRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);  // Draw each cell
+                // Draw dirt
+                if (dirtHandler.isDirty(x, y)) {
+                    gc.setFill(Color.BROWN);
+                    gc.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+
+                // Draw obstacles
+                if (sensorSimulator.isObstacle(x, y)) {
+                    gc.setFill(Color.BLACK);
+                    gc.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
             }
         }
     }

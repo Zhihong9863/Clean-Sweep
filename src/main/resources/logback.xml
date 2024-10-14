@@ -7,8 +7,8 @@
         </encoder>
     </appender>
 
-    <!-- Logger for Clean Sweep components at the DEBUG level -->
-    <logger name="com.cleanSweep" level="DEBUG"/>
+    <!-- Logger for Clean Sweep components at the INFO level -->
+    <logger name="com.cleanSweep" level="INFO"/>
 
     <!-- Root logger configuration -->
     <root level="INFO">

@@ -8,27 +8,47 @@ public class ActivityLogger {
     private static final Logger logger = LoggerFactory.getLogger(ActivityLogger.class);
 
     // Logs robot movements
-    public static void logMovement(int x, int y) {
-        logger.info("Moved to position (" + x + ", " + y + ")");
+    public void logMovement(int x, int y, String direction) {
+        logger.info("Moved to position (" + x + ", " + y + ") in direction: " + direction);
+    }
+
+    // Logs battery usage
+    public void logBatteryUsage(int batteryLife) {
+        logger.info("Battery remaining: " + batteryLife + " units");
+    }
+
+    // Logs dirt level
+    public void logDirtLevel(int currentDirt, int dirtCapacity) {
+        logger.info("Dirt level: " + currentDirt + "/" + dirtCapacity);
+    }
+
+    // Logs obstacle detection
+    public void logObstacleDetected(boolean isObstacle) {
+        logger.info("Obstacle detected: " + isObstacle);
+    }
+
+    // Logs when the battery is recharged
+    public void logRecharge() {
+        logger.info("Battery recharged to full capacity");
     }
 
     // Logs cleaning activity
-    public static void logCleaning(int x, int y) {
-        logger.info("Cleaned dirt at position (" + x + ", " + y + ")");
+    public void logCleaning(int x, int y) {
+        logger.info("Cleaned dirt at (" + x + ", " + y + ")");
     }
 
-    // Logs power consumption
-    public static void logPowerUsage(int remainingPower) {
-        logger.info("Power remaining: " + remainingPower + " units");
+    // Logs when the dirt capacity is full
+    public void logDirtFull() {
+        logger.info("Dirt capacity is full");
     }
 
-    // Logs when the robot returns to the charging station
-    public static void logReturningToBase() {
-        logger.info("Returning to charging station.");
+    // Logs when no dirt is found at a position
+    public void logNoDirtAtPosition(int x, int y) {
+        logger.info("No dirt found at position (" + x + ", " + y + ")");
     }
 
-    // Logs recharging activity
-    public static void logRecharging() {
-        logger.info("Battery recharged.");
+    // Logs when dirt is cleaned
+    public void logDirtCleaned(int x, int y) {
+        logger.info("Dirt cleaned at position (" + x + ", " + y + ")");
     }
 }
