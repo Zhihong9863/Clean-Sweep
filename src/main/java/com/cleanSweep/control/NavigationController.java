@@ -26,6 +26,8 @@ public class NavigationController {
     private int currentY;
     private SensorSimulator sensorSimulator;
     private RobotVisualizer robotVisualizer;
+    private static final int GRID_WIDTH = 20;  // Assuming a 20x20 grid
+    private static final int GRID_HEIGHT = 20;
 
     public NavigationController(int startX, int startY, SensorSimulator sensorSimulator, RobotVisualizer robotVisualizer) {
         this.currentX = startX;
@@ -35,28 +37,28 @@ public class NavigationController {
     }
 
     public void moveUp() {
-        if (!sensorSimulator.isObstacle(currentX, currentY - 1)) {
+        if (currentY > 0 && !sensorSimulator.isObstacle(currentX, currentY - 1)) {
             currentY--;
             robotVisualizer.renderRobot(currentX, currentY);
         }
     }
 
     public void moveDown() {
-        if (!sensorSimulator.isObstacle(currentX, currentY + 1)) {
+        if (currentY < GRID_HEIGHT - 1 && !sensorSimulator.isObstacle(currentX, currentY + 1)) {
             currentY++;
             robotVisualizer.renderRobot(currentX, currentY);
         }
     }
 
     public void moveLeft() {
-        if (!sensorSimulator.isObstacle(currentX - 1, currentY)) {
+        if (currentX > 0 && !sensorSimulator.isObstacle(currentX - 1, currentY)) {
             currentX--;
             robotVisualizer.renderRobot(currentX, currentY);
         }
     }
 
     public void moveRight() {
-        if (!sensorSimulator.isObstacle(currentX + 1, currentY)) {
+        if (currentX < GRID_WIDTH - 1 && !sensorSimulator.isObstacle(currentX + 1, currentY)) {
             currentX++;
             robotVisualizer.renderRobot(currentX, currentY);
         }

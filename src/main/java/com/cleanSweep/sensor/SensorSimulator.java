@@ -1,97 +1,71 @@
 package com.cleanSweep.sensor;
 
+import com.cleanSweep.interfaces.Sensor;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
-public class SensorSimulator {
+public class SensorSimulator implements Sensor {
 
-    private Map<String, Boolean> dirtMap;
-    private Map<String, Boolean> obstacleMap;
-    private Map<String, String> surfaceMap;
-    private Random random;
-    private int gridWidth;
-    private int gridHeight;
+    // Maps to simulate the environment
+    private Map<String, Boolean> dirtMap = new HashMap<>();
+    private Map<String, Boolean> obstacleMap = new HashMap<>();
+    private Map<String, String> surfaceMap = new HashMap<>();
 
     public SensorSimulator() {
-        this(20, 20); // Call the parameterized constructor with default values
+        // Initialize maps with some example data
+        dirtMap.put("0,0", true);
+        dirtMap.put("2,2", true);
+        dirtMap.put("3,4", true);
+        dirtMap.put("5,5", true);
+        dirtMap.put("7,8", true);
+
+        obstacleMap.put("1,0", true);
+        obstacleMap.put("4,4", true);
+        obstacleMap.put("6,6", true);
+        obstacleMap.put("8,8", true);
+        obstacleMap.put("10,10", true);
+
+        surfaceMap.put("0,0", "bare floor");
+        surfaceMap.put("1,0", "low-pile carpet");
     }
 
-    public SensorSimulator(int gridWidth, int gridHeight) {
-        dirtMap = new HashMap<>();
-        obstacleMap = new HashMap<>();
-        surfaceMap = new HashMap<>();
-        random = new Random();
-        this.gridWidth = gridWidth;
-        this.gridHeight = gridHeight;
-        initializeTestFloorPlan();
-    }
-
-    public void initializeTestFloorPlan() {
-        // Add dirt and obstacles
-        for (int i = 0; i < 50; i++) {
-            int x = random.nextInt(gridWidth - 2) + 1;
-            int y = random.nextInt(gridHeight - 2) + 1;
-            dirtMap.put(x + "," + y, true);
-            if (i < 20) obstacleMap.put(x + "," + y, true);
-        }
-
-        // Define surface types
-        for (int x = 0; x < gridWidth; x++) {
-            for (int y = 0; y < gridHeight; y++) {
-                if (x < 7) {
-                    surfaceMap.put(x + "," + y, "carpet");
-                } else if (x < 14) {
-                    surfaceMap.put(x + "," + y, "hardwood");
-                } else {
-                    surfaceMap.put(x + "," + y, "tile");
-                }
-            }
-        }
-
-        // Add walls around the grid
-        for (int x = 0; x < gridWidth; x++) {
-            obstacleMap.put(x + ",0", true);
-            obstacleMap.put(x + "," + (gridHeight - 1), true);
-        }
-        for (int y = 0; y < gridHeight; y++) {
-            obstacleMap.put("0," + y, true);
-            obstacleMap.put((gridWidth - 1) + "," + y, true);
-        }
-    }
-
+    @Override
     public boolean isDirtPresent(int x, int y) {
+        // Check if dirt is present at the given coordinates
         return dirtMap.getOrDefault(x + "," + y, false);
     }
 
+    @Override
     public void cleanDirt(int x, int y) {
+        // Clean dirt at the given coordinates
         dirtMap.put(x + "," + y, false);
     }
 
+    @Override
     public boolean isObstacle(int x, int y) {
+        // Check if there is an obstacle at the given coordinates
         return obstacleMap.getOrDefault(x + "," + y, false);
     }
 
+    @Override
     public String getSurfaceType(int x, int y) {
+        // Get the surface type at the given coordinates
         return surfaceMap.getOrDefault(x + "," + y, "unknown");
     }
 
+    @Override
     public int getSurfacePowerCost(int x, int y) {
+        // Determine the power cost based on the surface type
         String surfaceType = getSurfaceType(x, y);
         switch (surfaceType) {
-            case "carpet":
-                return 5; // Example power cost for carpet
-            case "hardwood":
-                return 3; // Example power cost for hardwood
-            case "tile":
-                return 2; // Example power cost for tile
+            case "bare floor":
+                return 1;
+            case "low-pile carpet":
+                return 2;
+            case "high-pile carpet":
+                return 3;
             default:
-                return 1; // Default power cost for unknown surfaces
+                return 0; // Unknown surface type
         }
-    }
-
-    public boolean isObstacleAhead(String position) {
-        // Use Boolean.FALSE as the default value
-        return obstacleMap.getOrDefault(position, Boolean.FALSE);
     }
 }

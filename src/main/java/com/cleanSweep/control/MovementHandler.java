@@ -27,14 +27,21 @@ public class MovementHandler {
     }
 
     public void moveAndClean() {
-        // Example: Move right, clean the location, consume power
-        navigationController.moveRight();
-        int[] position = navigationController.getCurrentPosition();
-        dirtHandler.cleanDirt(position[0], position[1]);
-        powerController.consumePower(position[0], position[1]);
+        try {
+            // Example: Move right, clean the location, consume power
+            navigationController.moveRight();
+            int[] position = navigationController.getCurrentPosition();
+            dirtHandler.cleanDirt(position[0], position[1]);
+            powerController.consumePower(position[0], position[1]);
 
-        if (dirtHandler.isCapacityFull() || powerController.shouldReturnToBase()) {
-            returnToBase();
+            if (dirtHandler.isCapacityFull() || powerController.shouldReturnToBase()) {
+                returnToBase();
+            }
+
+            // Add a delay to slow down the movement
+            Thread.sleep(500); // 500 milliseconds delay
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
