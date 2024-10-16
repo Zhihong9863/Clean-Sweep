@@ -1,6 +1,6 @@
 # Clean Sweep System
 
-Group 8: 
+**Group 8:** 
 	Dylan Neal
 	Huy Hoang Phan
 	Zhihong He
@@ -91,9 +91,3 @@ The system is covered by unit tests for all major modules:
 To build and run the application, use the following command:
 ```sh
 mvn spring-boot:run
-
-
-
-
-
-
