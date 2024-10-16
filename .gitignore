@@ -19,6 +19,43 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Maven target directory
+target/
+
+# IDE/Editor files and settings
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# VS Code settings
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# IntelliJ IDEA and Eclipse files
+*.ipr
+*.iws
+*.bak
+*.swp
+
+# Node.js dependencies
+node_modules/
+
+# H2 database files
+*.db
+
+# Virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Java coverage and build output
+coverage/
+*.ec
+*.exec
+
+# Gradle build output
+build/
+.gradle/
