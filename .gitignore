@@ -4,6 +4,9 @@
 # Log file
 *.log
 
+# Ignore Maven local repository folder
+.m2/
+
 # BlueJ files
 *.ctxt
 
