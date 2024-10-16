@@ -68,6 +68,9 @@ The system is covered by unit tests for all major modules:
 ## BFS For Robot Clean (demo)
 ![move](https://github.com/user-attachments/assets/3430b70d-c87c-4db4-9d94-3a12318a5b2e)
 
+## DFS For Robot Clean (demo)
+![move2](https://github.com/user-attachments/assets/66eabe5b-24bb-4bd5-8fae-77422dadd0a1)
+
 ## BackEnd Running Condition
 ![646d93d542776a98234b648279b806d](https://github.com/user-attachments/assets/bc8bfa85-1152-4e4e-913c-92b88df27ee4)
 ![3f4848306fbafaf6898552b23c4ab63](https://github.com/user-attachments/assets/bbc345d6-0caf-4f83-8faf-17ccd18aacc5)
