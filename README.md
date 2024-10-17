@@ -91,4 +91,4 @@ The system is covered by unit tests for all major modules:
 ### Build and Run the Application
 To build and run the application, use the following command:
 ```sh
-mvn spring-boot:run
+mvn javafx:run
