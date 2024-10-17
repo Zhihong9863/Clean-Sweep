@@ -112,7 +112,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.cleanSweep.frontend.ui.SimulationUI</mainClass>
+                    <mainClass>com.cleanSweep.CleanSweepApplication</mainClass>
                 </configuration>
             </plugin>
 
