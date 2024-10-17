@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class NavigationServiceTest {
@@ -86,17 +87,35 @@ class NavigationServiceTest {
     }
 
     @Test
-    void testStepNavigationCompletion() {
+    void testStepNavigationWithDirt() {
+        // Place dirt on cell (0, 0)
+        cells[0][0].setDirtLevel(3);
+
+        // Start navigation
         navigationService.startNavigation(0, 0);
 
-        // Complete the navigation
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                navigationService.stepNavigation(gc, floorPlanVisualizer, robotVisualizer);
-            }
+        // Simulate one step where dirt is cleaned
+        navigationService.stepNavigation(gc, floorPlanVisualizer, robotVisualizer);
+
+        // Verify that the dirt was cleaned and logged
+        verify(dirtService).cleanDirt(0, 0);
+        verify(activityLogger).logMovement(0, 0, "Visiting");
+    }
+
+
+    @Test
+    void testStepNavigationCompletion() {
+        // Start navigation at (0, 0)
+        navigationService.startNavigation(0, 0);
+
+        // Simulate navigation completion by iterating enough times for DFS traversal to complete
+        for (int i = 0; i < 100; i++) {
+            navigationService.stepNavigation(gc, floorPlanVisualizer, robotVisualizer);
         }
 
+        // Verify that all cells have been visited and navigation has completed
         verify(activityLogger, atLeastOnce()).logMovement(anyInt(), anyInt(), eq("All cells visited, navigation completed"));
-        assert(navigationService.isNavigationCompleted());
+        assertTrue(navigationService.isNavigationCompleted());
     }
+
 }

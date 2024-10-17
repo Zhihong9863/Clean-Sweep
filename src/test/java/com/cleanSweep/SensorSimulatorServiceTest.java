@@ -63,6 +63,18 @@ class SensorSimulatorServiceTest {
     }
 
     @Test
+    void testCleanNoDirt() {
+        // No dirt at (3, 3)
+        cells[3][3].setDirtLevel(0);
+
+        // Attempt to clean (should log "No dirt")
+        sensorSimulatorService.cleanDirt(3, 3);
+
+        verify(activityLogger).logNoDirtAtPosition(3, 3);
+    }
+
+
+    @Test
     void testCleanDirt() {
         // Set dirt level at (2, 2) and clean it
         cells[2][2].setDirtLevel(3);

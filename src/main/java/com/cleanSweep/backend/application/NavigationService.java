@@ -123,7 +123,7 @@ import java.util.Deque;
 //    }
 //}
 
-//TODO: DFS algorithm (also strange, because it depends on the stack, it will suddenly show up in a random position) -check for front end
+//TODO: DFS algorithm 
 @Service
 public class NavigationService {
 
@@ -171,6 +171,7 @@ public class NavigationService {
 
         if (sensorSimulatorService.isObstacle(currentX, currentY)) {
             activityLogger.logObstacle(currentX, currentY);
+            stack.pop();  // Pop the current cell if it's blocked by an obstacle
             return;
         }
 
