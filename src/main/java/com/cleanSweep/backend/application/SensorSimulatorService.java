@@ -36,8 +36,11 @@ public class SensorSimulatorService implements Sensor {
             for (int y = 0; y < gridSize; y++) {
                 if(x == 0 && y == 0) continue; //(0,0) will always be the charging station
                 Cell cell = floorMap.getCells()[x][y];
-                cell.setObstacle(obstacleGrid[x][y]); // lay down a screen
-                cell.setDirtLevel(random.nextInt(4)); // Randomly generate dirt levels of 0-3
+                if (obstacleGrid[x][y]){
+                    cell.setObstacle(obstacleGrid[x][y]); // lay down a screen
+                } else {
+                    cell.setDirtLevel(random.nextInt(4)); // Randomly generate dirt levels of 0-3
+                }
             }
         }
     }

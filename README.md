@@ -65,8 +65,9 @@ The system is covered by unit tests for all major modules:
 - **Floor Plans**: Stored in `resources/templates/floorPlan.json`.
 - **Application Properties**: Configured in `resources/application.properties` (e.g., grid size, battery capacity, dirt levels).
 
-## BFS For Robot Clean (demo)
-![move](https://github.com/user-attachments/assets/3430b70d-c87c-4db4-9d94-3a12318a5b2e)
+## DFS For Robot Clean (demo)
+![move2](https://github.com/user-attachments/assets/9190b539-0744-4aa1-ac81-0f81665a3685)
+
 
 ## BackEnd Running Condition
 ![646d93d542776a98234b648279b806d](https://github.com/user-attachments/assets/bc8bfa85-1152-4e4e-913c-92b88df27ee4)
@@ -90,4 +91,4 @@ The system is covered by unit tests for all major modules:
 ### Build and Run the Application
 To build and run the application, use the following command:
 ```sh
-mvn spring-boot:run
+mvn javafx:run

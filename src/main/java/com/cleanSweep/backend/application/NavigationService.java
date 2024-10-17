@@ -165,7 +165,7 @@ public class NavigationService {
             return;
         }
 
-        Cell currentCell = stack.pop();
+        Cell currentCell = stack.peek();
         currentX = currentCell.getX();
         currentY = currentCell.getY();
 
@@ -185,19 +185,14 @@ public class NavigationService {
         floorPlanVisualizer.render(gc);
         robotVisualizer.render(gc);
 
-        for (Direction direction : Direction.values()) {
-            int newX = currentX + direction.getXOffset();
-            int newY = currentY + direction.getYOffset();
-
-            if (isValidMove(newX, newY)) {
-                Cell neighborCell = floorMap.getCells()[newX][newY];
-                if (!neighborCell.isVisited()) {
-                    stack.push(neighborCell);
-                    neighborCell.setVisited(true);
-                }
-            }
+        Cell nextCell = getNeighborCell();
+        if (nextCell != null) {
+            stack.push(nextCell);
+            nextCell.setVisited(true);
+        } else {
+            stack.pop(); //only pop if current node already visited all 4 directions
         }
-
+        
         if (!batteryService.hasSufficientPower()) {
             activityLogger.logRecharge();
             return;
@@ -207,6 +202,20 @@ public class NavigationService {
             activityLogger.logMovement(currentX, currentY, "All cells visited, navigation completed");
             isNavigationCompleted = true;
         }
+    }
+
+    private Cell getNeighborCell() {
+        for (Direction direction : Direction.values()) {
+            int newX = currentX + direction.getXOffset();
+            int newY = currentY + direction.getYOffset();
+            if (isValidMove(newX, newY)) {
+                Cell neighborCell = floorMap.getCells()[newX][newY];
+                if (!neighborCell.isVisited() && !sensorSimulatorService.isObstacle(newX, newY)) {
+                    return neighborCell;
+                }
+            }
+        }
+        return null;
     }
 
     private boolean isValidMove(int x, int y) {
