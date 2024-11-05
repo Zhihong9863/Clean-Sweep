@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class NavigationServiceTest {
@@ -79,7 +81,7 @@ class NavigationServiceTest {
         // Set dirt level and start navigation
         cells[0][0].setDirtLevel(2);
         navigationService.startNavigation(0, 0);
-        navigationService.stepNavigation(gc, floorPlanVisualizer, robotVisualizer);
+        navigationService.cleaningNavigation(gc, floorPlanVisualizer, robotVisualizer);
 
         // Verify the dirt is cleaned, and the robot moves
         verify(dirtService).cleanDirt(0, 0);
@@ -95,7 +97,7 @@ class NavigationServiceTest {
         navigationService.startNavigation(0, 0);
 
         // Simulate one step where dirt is cleaned
-        navigationService.stepNavigation(gc, floorPlanVisualizer, robotVisualizer);
+        navigationService.cleaningNavigation(gc, floorPlanVisualizer, robotVisualizer);
 
         // Verify that the dirt was cleaned and logged
         verify(dirtService).cleanDirt(0, 0);
@@ -110,7 +112,7 @@ class NavigationServiceTest {
 
         // Simulate navigation completion by iterating enough times for DFS traversal to complete
         for (int i = 0; i < 100; i++) {
-            navigationService.stepNavigation(gc, floorPlanVisualizer, robotVisualizer);
+            navigationService.cleaningNavigation(gc, floorPlanVisualizer, robotVisualizer);
         }
 
         // Verify that all cells have been visited and navigation has completed
