@@ -66,8 +66,7 @@ The system is covered by unit tests for all major modules:
 - **Application Properties**: Configured in `resources/application.properties` (e.g., grid size, battery capacity, dirt levels).
 
 ## DFS For Robot Clean (demo)
-![move2](https://github.com/user-attachments/assets/9190b539-0744-4aa1-ac81-0f81665a3685)
-
+https://github.com/user-attachments/assets/acb851e8-4963-4b52-8dfc-70e5d6133c93
 
 ## BackEnd Running Condition
 ![646d93d542776a98234b648279b806d](https://github.com/user-attachments/assets/bc8bfa85-1152-4e4e-913c-92b88df27ee4)
