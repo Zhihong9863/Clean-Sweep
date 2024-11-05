@@ -26,7 +26,7 @@ public class HUDController extends VBox {
     }
 
     public void update() {
-        batteryLabel.setText("Battery: " + batteryService.getBatteryLevel() + "%");
+        batteryLabel.setText("Battery: " + batteryService.getBattery() + "%");
         dirtCapacityLabel.setText("Dirt Capacity: "
                 + dirtService.getCurrentCapacity() + " / " + dirtService.getDirtCapacity());
     }

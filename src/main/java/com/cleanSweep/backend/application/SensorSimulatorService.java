@@ -56,7 +56,7 @@ public class SensorSimulatorService implements Sensor {
         Random random = new Random();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                grid[x][y] = random.nextInt(20) == 0; // 20% 概率生成障碍物
+                grid[x][y] = random.nextInt(7) == 0;
             }
         }
         return grid;
@@ -69,7 +69,7 @@ public class SensorSimulatorService implements Sensor {
 
     @Override
     public boolean isObstacle(int x, int y) {
-        return obstacleGrid[x][y];
+        return obstacleGrid[x][y]==true;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.cleanSweep.backend.domain;
 
+import java.util.List;
+
 import com.cleanSweep.backend.common.FloorType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +19,7 @@ public class Cell {
     private boolean isObstacle;
     private boolean isStairs;
     private int dirtLevel;
+    private List<int[]> wayToChargingStation;
 
     public void reduceDirtLevel() {
         if (dirtLevel > 0) {

@@ -54,7 +54,7 @@ public class CleanSweepApplication extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         // Passing dependencies to FloorPlanVisualizer and RobotFisualizer
-        FloorPlanVisualizer floorPlanVisualizer = new FloorPlanVisualizer(sensorSimulatorService, dirtService, floorMap, gridSize, cellSize);
+        FloorPlanVisualizer floorPlanVisualizer = new FloorPlanVisualizer(sensorSimulatorService, dirtService, batteryService, floorMap, gridSize, cellSize);
         RobotVisualizer robotVisualizer = new RobotVisualizer(navigationService, cellSize);
 
         // Rendering Grid

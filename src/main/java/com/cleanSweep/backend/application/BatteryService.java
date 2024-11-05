@@ -11,11 +11,12 @@ import org.springframework.stereotype.Service;
 public class BatteryService {
 
     @Getter
-    private int batteryLevel;
+    private int battery;
 
     @Value("${clean-sweep.battery.low-threshold}")
     private int lowBatteryThreshold;
 
+    @Getter
     @Value("${clean-sweep.battery.full-charge}")
     private int fullChargeValue;
 
@@ -24,29 +25,35 @@ public class BatteryService {
 
     @PostConstruct
     public void init() {
-        this.batteryLevel = fullChargeValue;  // Initialize after dependency injection is completed
+        this.battery = fullChargeValue;  // Initialize after dependency injection is completed
     }
 
-    public void consumePower(int dirtLevel) {
-        if (batteryLevel > dirtLevel) {
-            batteryLevel -= dirtLevel;
-            activityLogger.logBatteryUsage(batteryLevel);
+    public void consumePower(int units) {
+        if (battery > units) {
+            battery -= units;
+            activityLogger.logBatteryUsage(battery);
         } else {
             System.out.println("Battery depleted. Returning to charging station.");
             recharge();
         }
     }
 
+    // need to recharge battery if current battery <= battery needed to reach the charging station + 4
+    public boolean isRechargeNeeded(int batteryToReachStation){
+        return battery<= batteryToReachStation + 4;
+    }
+
+
     public boolean isBatteryDepleted() {
-        return batteryLevel <= 0;
+        return battery <= 0;
     }
 
     public boolean hasSufficientPower() {
-        return batteryLevel > lowBatteryThreshold;
+        return battery > lowBatteryThreshold;
     }
 
     public void recharge() {
-        batteryLevel = fullChargeValue;
+        battery = fullChargeValue;
         activityLogger.logRecharge();
     }
 }

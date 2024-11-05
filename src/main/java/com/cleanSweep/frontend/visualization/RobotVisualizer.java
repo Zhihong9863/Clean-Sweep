@@ -17,6 +17,6 @@ public class RobotVisualizer {
     public void render(GraphicsContext gc) {
         int[] position = navigationService.getCurrentPosition();
         gc.setFill(Color.BLUE);
-        gc.fillOval(position[0] * cellSize, position[1] * cellSize, cellSize, cellSize);
+        gc.fillOval(position[1] * cellSize, position[0] * cellSize, cellSize, cellSize);
     }
 }
