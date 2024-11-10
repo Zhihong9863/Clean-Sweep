@@ -45,6 +45,9 @@ public class NavigationService {
 
     public void startNavigation(int startX, int startY) {
         if (!isNavigationCompleted && stack.isEmpty()) {
+            startX = 0;
+            startY = 0;
+            
             Cell startCell = floorMap.getCells()[startX][startY];
             stack.push(startCell);
             startCell.setVisited(true);
@@ -101,19 +104,24 @@ public class NavigationService {
 
         activityLogger.logMovement(currentX, currentY, "Visiting");
 
-        if (stationIdx ==0){
-            // remove dirt and charge the battery at the charging station, then come back to latest location
+        if (currentX == 0 && currentY == 0) {
             dirtService.removeDirt();
-            // If battery is lower than 20% of max battery capacity, recharge
-            if (batteryService.getBattery()<batteryService.getFullChargeValue()/5){
-                batteryService.recharge();
+            batteryService.recharge();
+            
+            if (stack.isEmpty()) {
+                isNavigationCompleted = true;
+            } else {
+                if (stationDist == -1) {
+                    stationDist = 1;
+                }
             }
-            stationDist = 1;
-        } else if (stationIdx== stationPath.size()-1 && stationDist==1){
-            // re-enable cleaning mode when come back to the latest location
+        } else if (stationDist == 1 && stationIdx == stationPath.size() - 1) {
             dirtService.setCleaningMode();
         }
-        stationIdx += stationDist;
+        
+        if (!isNavigationCompleted) {
+            stationIdx += stationDist;
+        }
     }
 
 
@@ -137,7 +145,7 @@ public class NavigationService {
 
         if (sensorSimulatorService.isObstacle(currentX, currentY)) {
             activityLogger.logObstacle(currentX, currentY);
-            stack.pop();  // Pop the current cell if it's blocked by an obstacle
+            stack.pop();
             return;
         }
 
@@ -152,14 +160,13 @@ public class NavigationService {
 
         int batteryToReachStation = currentCell.getWayToChargingStation().size()-1;
         
-        // get the path back to charging station from the current location when full dirt capacity or low battery
+        // 修改：当需要充电或清空垃圾时，设置返回充电站的路径
         if (dirtService.isFullDirt() || batteryService.isRechargeNeeded(batteryToReachStation)){
-            //stop cleaning
             dirtService.stopCleaningMode();
-            //get the path to charging station from current location
             stationPath = currentCell.getWayToChargingStation();
             stationIdx = stationPath.size()-1;
             stationDist = -1;
+            return;
         }
 
         activityLogger.logMovement(currentX, currentY, "Visiting");
@@ -173,7 +180,7 @@ public class NavigationService {
             stack.push(nextCell);
             nextCell.setVisited(true);
         } else {
-            stack.pop(); //only pop if current node already visited all 4 directions
+            stack.pop();
         }
         
         if (!batteryService.hasSufficientPower()) {
@@ -182,8 +189,15 @@ public class NavigationService {
         }
 
         if (stack.isEmpty()) {
-            activityLogger.logMovement(currentX, currentY, "All cells visited, navigation completed");
-            isNavigationCompleted = true;
+            if (currentX != 0 || currentY != 0) {
+                dirtService.stopCleaningMode();
+                stationPath = currentCell.getWayToChargingStation();
+                stationIdx = stationPath.size()-1;
+                stationDist = -1;
+            } else {
+                activityLogger.logMovement(currentX, currentY, "All cells visited, navigation completed");
+                isNavigationCompleted = true;
+            }
         }
     }
 
@@ -211,6 +225,25 @@ public class NavigationService {
 
     public boolean isNavigationCompleted() {
         return isNavigationCompleted;
+    }
+
+    private int[] findNearestChargingStation(int x, int y) {
+        int minDistance = Integer.MAX_VALUE;
+        int[] nearest = new int[]{0, 0};
+        
+        for (int i = 0; i < floorMap.getCells().length; i++) {
+            for (int j = 0; j < floorMap.getCells()[0].length; j++) {
+                if (floorMap.getCells()[i][j].isChargingStation()) {
+                    int distance = Math.abs(x - i) + Math.abs(y - j);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearest[0] = i;
+                        nearest[1] = j;
+                    }
+                }
+            }
+        }
+        return nearest;
     }
 }
 

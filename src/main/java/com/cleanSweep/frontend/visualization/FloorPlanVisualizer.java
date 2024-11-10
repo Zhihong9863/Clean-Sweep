@@ -38,11 +38,11 @@ public class FloorPlanVisualizer {
                 gc.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize); // Dynamically render the grid cells
                                                                                // based on size
 
-                // Special case for charging station at (0,0)
-                if (x == 0 && y == 0) {
-                    gc.setFill(Color.GREEN); // Set (0,0) as blue (charging station)
+                // Check if it's a charging station
+                if (floorMap.getCells()[x][y].isChargingStation()) {
+                    gc.setFill(Color.GREEN);
                     gc.fillRect(y * cellSize, x * cellSize, cellSize, cellSize);
-                    continue; // Skip further processing for this cell
+                    continue;
                 }
 
                 // Get dirt level and render the appropriate color
