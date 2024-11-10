@@ -91,6 +91,11 @@ public class NavigationService {
     
     //Moving to the charging location to recharge battery or remove dirt
     public void stationNavigation(GraphicsContext gc, FloorPlanVisualizer floorPlanVisualizer, RobotVisualizer robotVisualizer) {
+        // 添加安全检查
+        if (stationPath == null || stationPath.isEmpty() || stationIdx >= stationPath.size() || stationIdx < 0) {
+            return;
+        }
+
         int[] currCell = stationPath.get(stationIdx);
         currentX = currCell[0];
         currentY = currCell[1];
@@ -119,7 +124,9 @@ public class NavigationService {
             dirtService.setCleaningMode();
         }
         
-        if (!isNavigationCompleted) {
+        // 添加边界检查
+        if (!isNavigationCompleted && ((stationDist == 1 && stationIdx < stationPath.size() - 1) || 
+            (stationDist == -1 && stationIdx > 0))) {
             stationIdx += stationDist;
         }
     }
@@ -152,7 +159,7 @@ public class NavigationService {
         // The moving unit is 1, the cleaning unit equals to dirt level
         int dirtLevel = currentCell.getDirtLevel();
         if (dirtLevel > 0) {
-            batteryService.consumePower(dirtLevel+1);
+            batteryService.consumePower(dirtLevel);
             dirtService.cleanDirt(currentX, currentY);
         } else {
             batteryService.consumePower(1);
@@ -166,6 +173,9 @@ public class NavigationService {
             stationPath = currentCell.getWayToChargingStation();
             stationIdx = stationPath.size()-1;
             stationDist = -1;
+            if (batteryService.isRechargeNeeded(batteryToReachStation)) {
+                activityLogger.logLowBattery();  // 添加低电量日志
+            }
             return;
         }
 

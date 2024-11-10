@@ -40,7 +40,7 @@ public class BatteryService {
 
     // need to recharge battery if current battery <= battery needed to reach the charging station + 4
     public boolean isRechargeNeeded(int batteryToReachStation){
-        return battery<= batteryToReachStation + 4;
+        return battery <= batteryToReachStation + 4 || battery <= fullChargeValue * 0.3;
     }
 
 

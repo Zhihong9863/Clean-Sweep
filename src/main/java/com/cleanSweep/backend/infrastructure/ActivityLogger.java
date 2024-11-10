@@ -54,5 +54,11 @@ public class ActivityLogger {
         logger.info(message);
         logRepo.saveLog(message);
     }
+
+    public void logLowBattery() {
+        String message = "Low battery, returning to charging station";
+        logger.info(message);
+        logRepo.saveLog(message);
+    }
 }
 
