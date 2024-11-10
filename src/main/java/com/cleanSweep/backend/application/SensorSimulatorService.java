@@ -29,9 +29,9 @@ public class SensorSimulatorService implements Sensor {
 
     @PostConstruct
     public void initializeObstacleAndDirt() {
-        floorMap.initializeGrid(gridSize); // Initialize the grid of FloorMap
-        this.obstacleGrid = generateObstacles(gridSize, gridSize); // Obstacle grid generation
-        this.chargingStationGrid = generateChargingStations(gridSize, gridSize); // 新增：生成充电站
+        floorMap.initializeGrid(gridSize);
+        this.obstacleGrid = generateObstacles(gridSize, gridSize);
+        this.chargingStationGrid = generateChargingStations(gridSize, gridSize);
 
         Random random = new Random();
         for (int x = 0; x < gridSize; x++) {
@@ -42,7 +42,19 @@ public class SensorSimulatorService implements Sensor {
                 } else if (chargingStationGrid[x][y]) {
                     cell.setChargingStation(true);
                 } else {
-                    cell.setDirtLevel(random.nextInt(4));
+                    int floorTypeRandom = random.nextInt(3);
+                    switch (floorTypeRandom) {
+                        case 0:
+                            cell.setFloorType(FloorType.BARE_FLOOR);
+                            break;
+                        case 1:
+                            cell.setFloorType(FloorType.LOW_PILE_CARPET);
+                            break;
+                        case 2:
+                            cell.setFloorType(FloorType.HIGH_PILE_CARPET);
+                            break;
+                    }
+                    cell.setDirtLevel(random.nextInt(2));
                 }
             }
         }

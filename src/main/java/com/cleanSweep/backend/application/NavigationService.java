@@ -100,7 +100,8 @@ public class NavigationService {
         currentX = currCell[0];
         currentY = currCell[1];
 
-        batteryService.consumePower(1);
+        int floorPowerCost = sensorSimulatorService.getSurfacePowerCost(currentX, currentY);
+        batteryService.consumePower(floorPowerCost);
 
         //Update UX/UI
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
@@ -156,25 +157,26 @@ public class NavigationService {
             return;
         }
 
-        // The moving unit is 1, the cleaning unit equals to dirt level
-        int dirtLevel = currentCell.getDirtLevel();
-        if (dirtLevel > 0) {
-            batteryService.consumePower(dirtLevel);
+        // 获取地板类型的电量消耗
+        int floorPowerCost = sensorSimulatorService.getSurfacePowerCost(currentX, currentY);
+        
+        // 无论是否有灰尘，移动都消耗地板类型对应的电量
+        batteryService.consumePower(floorPowerCost);
+        
+        // 如果有灰尘，清理灰尘
+        if (currentCell.getDirtLevel() > 0) {
             dirtService.cleanDirt(currentX, currentY);
-        } else {
-            batteryService.consumePower(1);
         }
 
         int batteryToReachStation = currentCell.getWayToChargingStation().size()-1;
         
-        // 修改：当需要充电或清空垃圾时，设置返回充电站的路径
         if (dirtService.isFullDirt() || batteryService.isRechargeNeeded(batteryToReachStation)){
             dirtService.stopCleaningMode();
             stationPath = currentCell.getWayToChargingStation();
             stationIdx = stationPath.size()-1;
             stationDist = -1;
             if (batteryService.isRechargeNeeded(batteryToReachStation)) {
-                activityLogger.logLowBattery();  // 添加低电量日志
+                activityLogger.logLowBattery();
             }
             return;
         }

@@ -3,6 +3,7 @@ package com.cleanSweep.frontend.visualization;
 import com.cleanSweep.backend.application.BatteryService;
 import com.cleanSweep.backend.application.DirtService;
 import com.cleanSweep.backend.application.SensorSimulatorService;
+import com.cleanSweep.backend.domain.Cell;
 import com.cleanSweep.backend.domain.FloorMap;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -29,62 +30,82 @@ public class FloorPlanVisualizer {
     }
 
     public void render(GraphicsContext gc) {
-        // Dynamically determine the grid size from injected parameters
-
         // Render the grid
         for (int x = 0; x < gridSize; x++) {
             for (int y = 0; y < gridSize; y++) {
-                gc.setStroke(Color.GRAY);
-                gc.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize); // Dynamically render the grid cells
-                                                                               // based on size
+                Cell currentCell = floorMap.getCells()[x][y];
 
-                // Check if it's a charging station
-                if (floorMap.getCells()[x][y].isChargingStation()) {
+                // First render floor type
+                switch (currentCell.getFloorType()) {
+                    case BARE_FLOOR:
+                        gc.setFill(Color.LIGHTGRAY);
+                        break;
+                    case LOW_PILE_CARPET:
+                        gc.setFill(Color.KHAKI);
+                        break;
+                    case HIGH_PILE_CARPET:
+                        gc.setFill(Color.SANDYBROWN);
+                        break;
+                }
+                gc.fillRect(y * cellSize, x * cellSize, cellSize, cellSize);
+
+                // Then render charging stations
+                if (currentCell.isChargingStation()) {
                     gc.setFill(Color.GREEN);
                     gc.fillRect(y * cellSize, x * cellSize, cellSize, cellSize);
-                    continue;
                 }
 
-                // Get dirt level and render the appropriate color
-                int dirtLevel = floorMap.getCells()[x][y].getDirtLevel();
-                if (dirtLevel > 0) {
-                    double redShade = 0.3 + ((4 - dirtLevel) / 3.0) * 0.7; // Adjust color intensity
-                    gc.setFill(Color.color(redShade, 0, 0));
+                // Then render dirt on top if present
+                if (currentCell.getDirtLevel() > 0) {
+                    gc.setFill(Color.RED);
                     gc.fillRect(y * cellSize, x * cellSize, cellSize, cellSize);
                 }
 
-                // Render obstacle in black
+                // Finally render obstacles
                 if (sensorSimulatorService.isObstacle(x, y)) {
                     gc.setFill(Color.BLACK);
                     gc.fillRect(y * cellSize, x * cellSize, cellSize, cellSize);
                 }
+
+                // Draw grid lines last to ensure they're always visible
+                gc.setStroke(Color.GRAY);
+                gc.strokeRect(y * cellSize, x * cellSize, cellSize, cellSize);
             }
         }
 
-        // Render color legend below the grid
         renderColorLegend(gc);
     }
 
     private void renderColorLegend(GraphicsContext gc) {
         gc.setFont(new Font(14));
 
-        // Starting coordinates for the left and right parts of the legend
         double leftLegendX = 10;
-        double rightLegendX = 270; // Adjust this value based on spacing
+        double rightLegendX = 270;
         double legendStartY = gridSize * cellSize + 20;
-
-        // Spacing between each legend entry to ensure visibility
         double entrySpacing = 22;
-
-        // Battery and Dirt Progress Bars (Left Side)
-        double barWidth = 100; // Width of the progress bar
-        double barHeight = 20; // Height of the progress bar
+        double barWidth = 100;
+        double barHeight = 20;
 
         // Battery Progress Bar
         double batteryPercentage = (double) batteryService.getBattery() / batteryService.getFullChargeValue();
-        gc.setFill(Color.GRAY); // Background for the battery bar
+        
+        // 绘制电池进度条背景
+        gc.setFill(Color.GRAY);
         gc.fillRect(leftLegendX, legendStartY, barWidth, barHeight);
-        gc.setFill(Color.GREEN); // Fill color for battery level
+        
+        // 根据电量百分比设置颜色
+        Color batteryColor;
+        if (batteryPercentage > 0.75) {
+            batteryColor = Color.GREEN;  // 75-100% 绿色
+        } else if (batteryPercentage > 0.5) {
+            batteryColor = Color.ORANGE;  // 50-75% 橙色
+        } else if (batteryPercentage > 0.25) {
+            batteryColor = Color.YELLOW;  // 25-50% 黄色
+        } else {
+            batteryColor = Color.RED;  // 0-25% 红色
+        }
+        
+        gc.setFill(batteryColor);
         gc.fillRect(leftLegendX, legendStartY, barWidth * batteryPercentage, barHeight);
         gc.setFill(Color.BLACK);
         gc.fillText("Battery: " + batteryService.getBattery() + "/" + batteryService.getFullChargeValue(),
@@ -92,55 +113,72 @@ public class FloorPlanVisualizer {
 
         // Dirt Progress Bar
         double dirtPercentage = (double) dirtService.getCurrentCapacity() / dirtService.getDirtCapacity();
-        gc.setFill(Color.GRAY); // Background for the dirt bar
+        
+        // 绘制垃圾进度条背景
+        gc.setFill(Color.GRAY);
         gc.fillRect(leftLegendX, legendStartY + entrySpacing, barWidth, barHeight);
-        gc.setFill(Color.BROWN); // Fill color for dirt level
+        
+        // 根据垃圾容量百分比设置颜色
+        Color dirtColor;
+        if (dirtPercentage < 0.25) {
+            dirtColor = Color.GREEN;  // 0-25% 绿色
+        } else if (dirtPercentage < 0.5) {
+            dirtColor = Color.YELLOW;  // 25-50% 黄色
+        } else if (dirtPercentage < 0.75) {
+            dirtColor = Color.ORANGE;  // 50-75% 橙色
+        } else {
+            dirtColor = Color.RED;  // 75-100% 红色
+        }
+        
+        gc.setFill(dirtColor);
         gc.fillRect(leftLegendX, legendStartY + entrySpacing, barWidth * dirtPercentage, barHeight);
         gc.setFill(Color.BLACK);
         gc.fillText("Dirt: " + dirtService.getCurrentCapacity() + "/" + dirtService.getDirtCapacity(),
                 leftLegendX + barWidth + 10, legendStartY + entrySpacing + barHeight - 5);
 
+        // Status text
         String txt = dirtService.isCleaningActive()
                 ? "The vacuum is cleaning"
                 : "The vacuum is returning to the\nstation to recharge and empty dirt";
 
         String[] lines = txt.split("\n");
-
         gc.fillText("Status:", leftLegendX, legendStartY + entrySpacing * 2 + barHeight - 5);
-
-        double lineYOffset = legendStartY + entrySpacing * 2 + barHeight - 5; // Starting Y position
-        double lineSpacing = 15; 
-
+        double lineYOffset = legendStartY + entrySpacing * 2 + barHeight - 5;
+        double lineSpacing = 15;
         for (int i = 0; i < lines.length; i++) {
             gc.fillText(lines[i], leftLegendX + 50, lineYOffset + (i * lineSpacing));
         }
 
-        // Existing Legend Entries for Dirt Levels, Obstacles, and Charging Station
-        // (Right Side)
-        gc.setFill(Color.color(1, 0.3, 0.3)); // Light red for Dirt Level 1
+        // Floor Types Legend (Right Side)
+        gc.setFill(Color.LIGHTGRAY);
         gc.fillRect(rightLegendX, legendStartY, 15, 15);
         gc.setFill(Color.BLACK);
-        gc.fillText("Light Red - Dirt Level 1 (1 unit)", rightLegendX + 30, legendStartY + 15);
+        gc.fillText("Bare Floor (1 power unit)", rightLegendX + 30, legendStartY + 15);
 
-        gc.setFill(Color.color(1, 0, 0)); // Normal red for Dirt Level 2
+        gc.setFill(Color.KHAKI);
         gc.fillRect(rightLegendX, legendStartY + entrySpacing, 15, 15);
         gc.setFill(Color.BLACK);
-        gc.fillText("Normal Red - Dirt Level 2 (2 units)", rightLegendX + 30, legendStartY + entrySpacing + 15);
+        gc.fillText("Low Pile Carpet (2 power units)", rightLegendX + 30, legendStartY + entrySpacing + 15);
 
-        gc.setFill(Color.color(0.7, 0, 0)); // Dark red for Dirt Level 3
+        gc.setFill(Color.SANDYBROWN);
         gc.fillRect(rightLegendX, legendStartY + entrySpacing * 2, 15, 15);
         gc.setFill(Color.BLACK);
-        gc.fillText("Dark Red - Dirt Level 3 (3 units)", rightLegendX + 30, legendStartY + entrySpacing * 2 + 15);
+        gc.fillText("High Pile Carpet (3 power units)", rightLegendX + 30, legendStartY + entrySpacing * 2 + 15);
 
-        gc.setFill(Color.BLACK); // Black for obstacle
+        gc.setFill(Color.RED);
         gc.fillRect(rightLegendX, legendStartY + entrySpacing * 3, 15, 15);
         gc.setFill(Color.BLACK);
-        gc.fillText("Black - Obstacle", rightLegendX + 30, legendStartY + entrySpacing * 3 + 15);
+        gc.fillText("Dirt", rightLegendX + 30, legendStartY + entrySpacing * 3 + 15);
 
-        gc.setFill(Color.GREEN); // Green for charging station
+        gc.setFill(Color.BLACK);
         gc.fillRect(rightLegendX, legendStartY + entrySpacing * 4, 15, 15);
         gc.setFill(Color.BLACK);
-        gc.fillText("Green - Charging Station", rightLegendX + 30, legendStartY + entrySpacing * 4 + 15);
+        gc.fillText("Obstacle", rightLegendX + 30, legendStartY + entrySpacing * 4 + 15);
+
+        gc.setFill(Color.GREEN);
+        gc.fillRect(rightLegendX, legendStartY + entrySpacing * 5, 15, 15);
+        gc.setFill(Color.BLACK);
+        gc.fillText("Charging Station", rightLegendX + 30, legendStartY + entrySpacing * 5 + 15);
     }
 
 }
