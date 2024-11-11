@@ -36,7 +36,7 @@ env:
   global:
     - MAVEN_OPTS="-Xmx2048m"
     - TEAMCITY_SERVER=cleansweep.teamcity.com
-    - secure: "YOUR_ENCRYPTED_TEAMCITY_TOKEN"  # 需要在 Travis CI 设置中添加
+
 
 # TeamCity integration
 after_success:
@@ -48,8 +48,9 @@ after_success:
         -H "Authorization: Bearer $TEAMCITY_TOKEN" \
         -H "Content-Type: application/xml" \
         -H "Accept: application/json" \
-        -d "<build><buildType id='CleanSweep_Build'/></build>"
+        -d "<build><buildType id='id135e61f841174c0fB288277eacd25adb_PipelineHead'/></build>"
     fi
+
 
 # Build status notifications
 notifications:

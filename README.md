@@ -85,7 +85,8 @@ https://github.com/user-attachments/assets/2cd2eb55-2add-46fd-83a0-0e6a4a4cd6d5
 ### CI/CD Pipeline
 [![GitHub Actions Status](https://github.com/DylanFromDepaul/Clean-Sweep/workflows/Clean%20Sweep%20CI%2FCD%20Pipeline/badge.svg)](https://github.com/DylanFromDepaul/Clean-Sweep/actions)
 [![Build Status](https://travis-ci.org/DylanFromDepaul/Clean-Sweep.svg?branch=main)](https://travis-ci.org/DylanFromDepaul/Clean-Sweep)
-[![TeamCity Build Status](https://cleansweep.teamcity.com/app/rest/builds/buildType:(id:CleanSweep_Build)/statusIcon)](https://cleansweep.teamcity.com/viewType.html?buildTypeId=CleanSweep_Build)
+[![TeamCity Build Status](https://cleansweep.teamcity.com/app/rest/builds/buildType:(id:id135e61f841174c0fB288277eacd25adb_PipelineHead)/statusIcon)](https://cleansweep.teamcity.com/buildConfiguration/id135e61f841174c0fB288277eacd25adb_PipelineHead?mode=builds)
+
 
 ### Prerequisites
 - **Java 19**
