@@ -57,8 +57,19 @@ public class FloorPlanVisualizer {
 
                 // Then render dirt on top if present
                 if (currentCell.getDirtLevel() > 0) {
-                    gc.setFill(Color.RED);
-                    gc.fillRect(y * cellSize, x * cellSize, cellSize, cellSize);
+                    gc.setFill(Color.DARKGRAY); // A darker gray for the dirt dots
+    
+                    // Calculate the center of the cell
+                    double centerX = (y * cellSize) + (cellSize / 2);
+                    double centerY = (x * cellSize) + (cellSize / 2);
+                    double dotSize = cellSize * 0.1; // Small dot size
+    
+                    // Draw 5 dots around the center
+                    gc.fillOval(centerX - dotSize * 2, centerY - dotSize * 2, dotSize, dotSize); // Top-left
+                    gc.fillOval(centerX + dotSize, centerY - dotSize * 2, dotSize, dotSize);      // Top-right
+                    gc.fillOval(centerX - dotSize, centerY, dotSize, dotSize);                    // Center
+                    gc.fillOval(centerX - dotSize * 2, centerY + dotSize, dotSize, dotSize);      // Bottom-left
+                    gc.fillOval(centerX + dotSize, centerY + dotSize, dotSize, dotSize);          // Bottom-right
                 }
 
                 // Finally render obstacles
@@ -165,10 +176,13 @@ public class FloorPlanVisualizer {
         gc.setFill(Color.BLACK);
         gc.fillText("High Pile Carpet (3 power units)", rightLegendX + 30, legendStartY + entrySpacing * 2 + 15);
 
-        gc.setFill(Color.RED);
-        gc.fillRect(rightLegendX, legendStartY + entrySpacing * 3, 15, 15);
+        gc.setFill(Color.DARKGRAY); // Set color to match dirt dots
+        double dotSize = 11; // Size of the dot in the legend
+        gc.fillOval(rightLegendX, legendStartY + entrySpacing * 3, dotSize, dotSize); // Draw dot instead of a square
+        
         gc.setFill(Color.BLACK);
-        gc.fillText("Dirt", rightLegendX + 30, legendStartY + entrySpacing * 3 + 15);
+        // Adjusted Y position to center the text better
+        gc.fillText("Dirt", rightLegendX + 30, legendStartY + entrySpacing * 3 + dotSize + 2); 
 
         gc.setFill(Color.BLACK);
         gc.fillRect(rightLegendX, legendStartY + entrySpacing * 4, 15, 15);

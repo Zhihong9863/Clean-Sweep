@@ -42,15 +42,16 @@ public class SensorSimulatorService implements Sensor {
                 } else if (chargingStationGrid[x][y]) {
                     cell.setChargingStation(true);
                 } else {
-                    int floorTypeRandom = random.nextInt(3);
+                    int floorTypeRandom = random.nextInt(4);
                     switch (floorTypeRandom) {
                         case 0:
+                        case 1: //50% chance for BARE_FLOOR
                             cell.setFloorType(FloorType.BARE_FLOOR);
                             break;
-                        case 1:
+                        case 2:
                             cell.setFloorType(FloorType.LOW_PILE_CARPET);
                             break;
-                        case 2:
+                        case 3:
                             cell.setFloorType(FloorType.HIGH_PILE_CARPET);
                             break;
                     }
@@ -71,6 +72,9 @@ public class SensorSimulatorService implements Sensor {
         Random random = new Random();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
+                if ((x==0 && y==0) || (x==0 && y==width-1) || (x==height-1 && y==0) || (x==height-1 && y==width-1)){
+                    continue;
+                }
                 grid[x][y] = random.nextInt(7) == 0;
             }
         }
@@ -79,25 +83,28 @@ public class SensorSimulatorService implements Sensor {
 
     private boolean[][] generateChargingStations(int width, int height) {
         boolean[][] grid = new boolean[width][height];
-        Random random = new Random();
+        // Random random = new Random();
         
         // 确保(0,0)位置是充电站
         grid[0][0] = true;
+        grid[0][width-1] = true;
+        grid[height-1][0] = true;
+        grid[height-1][width-1] = true;
         
-        // 随机生成4-5个额外的充电站
-        int numStations = random.nextInt(2) + 4; // 修改这里：4-5个额外充电站
-        int stationsPlaced = 0;
+        // // 随机生成4-5个额外的充电站
+        // int numStations = random.nextInt(2) + 4; // 修改这里：4-5个额外充电站
+        // int stationsPlaced = 0;
         
-        while (stationsPlaced < numStations) {
-            int x = random.nextInt(width);
-            int y = random.nextInt(height);
+        // while (stationsPlaced < numStations) {
+        //     int x = random.nextInt(width);
+        //     int y = random.nextInt(height);
             
-            // 跳过(0,0)位置，确保不会与障碍物重叠，且位置未被占用
-            if (!(x == 0 && y == 0) && !obstacleGrid[x][y] && !grid[x][y]) {
-                grid[x][y] = true;
-                stationsPlaced++;
-            }
-        }
+        //     // 跳过(0,0)位置，确保不会与障碍物重叠，且位置未被占用
+        //     if (!(x == 0 && y == 0) && !obstacleGrid[x][y] && !grid[x][y]) {
+        //         grid[x][y] = true;
+        //         stationsPlaced++;
+        //     }
+        // }
         return grid;
     }
 
