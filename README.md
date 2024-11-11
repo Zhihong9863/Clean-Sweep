@@ -79,12 +79,12 @@ https://github.com/user-attachments/assets/2cd2eb55-2add-46fd-83a0-0e6a4a4cd6d5
 # H2 Database
 ![dcbb3714bba0e544b78ec673f8f45ec](https://github.com/user-attachments/assets/fb7bf006-bf15-48d9-8fe7-4b4a3a80e41b)
 
-# Unit Test
+# Unit Test And Travis
 ![0d27c714a49e8d2862caa3803f8b238](https://github.com/user-attachments/assets/6bf3da48-1628-4ac0-993e-1aa6a7c65a1a)
+![image](https://github.com/user-attachments/assets/ded2bba9-ff20-4c3c-8c30-08bd5326c62e)
 
 ### CI/CD Pipeline
 [![GitHub Actions Status](https://github.com/DylanFromDepaul/Clean-Sweep/workflows/Clean%20Sweep%20CI%2FCD%20Pipeline/badge.svg)](https://github.com/DylanFromDepaul/Clean-Sweep/actions)
-[![Build Status](https://travis-ci.org/DylanFromDepaul/Clean-Sweep.svg?branch=main)](https://travis-ci.org/DylanFromDepaul/Clean-Sweep)
 [![TeamCity Build Status](https://cleansweep.teamcity.com/app/rest/builds/buildType:(id:id135e61f841174c0fB288277eacd25adb_PipelineHead)/statusIcon)](https://cleansweep.teamcity.com/buildConfiguration/id135e61f841174c0fB288277eacd25adb_PipelineHead?mode=builds)
 
 
