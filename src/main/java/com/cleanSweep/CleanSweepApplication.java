@@ -95,15 +95,18 @@ public class CleanSweepApplication extends Application {
 
             @Override
             public void handle(long now) {
-                if (now - lastUpdate >= 500_000_000) {  // Update every 500ms
+                if (now - lastUpdate >= 500_000_000) {  // 每500ms更新一次
+                    navigationService.stepNavigation();  // 更新机器人状态
+                    
+                    // 渲染当前状态
                     gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
                     floorPlanVisualizer.render(gc);
                     robotVisualizer.render(gc);
-                    navigationService.stepNavigation(gc, floorPlanVisualizer, robotVisualizer);  // Step navigation and update visuals
+                    
                     lastUpdate = now;
 
                     if (navigationService.isNavigationCompleted()) {
-                        stopAnimation();  // Stop animation when navigation is completed
+                        stopAnimation();
                     }
                 }
             }
