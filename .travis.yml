@@ -30,9 +30,31 @@ script:
 branches:
   only:
     - main
-    - develop
 
-# Environment variables (if needed)
+# Environment variables
 env:
   global:
-    - MAVEN_OPTS="-Xmx2048m" 
+    - MAVEN_OPTS="-Xmx2048m"
+    - TEAMCITY_SERVER=cleansweep.teamcity.com
+    - secure: "YOUR_ENCRYPTED_TEAMCITY_TOKEN"  # 需要在 Travis CI 设置中添加
+
+# TeamCity integration
+after_success:
+  # Trigger TeamCity build
+  - |
+    if [ "$TRAVIS_BRANCH" = "main" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+      curl -X POST \
+        "https://$TEAMCITY_SERVER/app/rest/buildQueue" \
+        -H "Authorization: Bearer $TEAMCITY_TOKEN" \
+        -H "Content-Type: application/xml" \
+        -H "Accept: application/json" \
+        -d "<build><buildType id='CleanSweep_Build'/></build>"
+    fi
+
+# Build status notifications
+notifications:
+  webhooks:
+    urls:
+      - https://$TEAMCITY_SERVER/app/rest/builds/
+    on_success: always
+    on_failure: always
