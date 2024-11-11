@@ -82,6 +82,11 @@ https://github.com/user-attachments/assets/acb851e8-4963-4b52-8dfc-70e5d6133c93
 # Unit Test
 ![b5c36954efeedfd77c6303671ea3e80](https://github.com/user-attachments/assets/54661359-e6c0-459a-8073-a91774ae2056)
 
+### CI/CD Pipeline
+[![GitHub Actions Status](https://github.com/DylanFromDepaul/Clean-Sweep/workflows/Clean%20Sweep%20CI%2FCD%20Pipeline/badge.svg)](https://github.com/DylanFromDepaul/Clean-Sweep/actions)
+[![Build Status](https://travis-ci.org/DylanFromDepaul/Clean-Sweep.svg?branch=main)](https://travis-ci.org/DylanFromDepaul/Clean-Sweep)
+[![TeamCity Build Status](https://cleansweep.teamcity.com/app/rest/builds/buildType:(id:CleanSweep_Build)/statusIcon)](https://cleansweep.teamcity.com/viewType.html?buildTypeId=CleanSweep_Build)
+
 ### Prerequisites
 - **Java 19**
 - **JavaFX 20**
@@ -91,3 +96,5 @@ https://github.com/user-attachments/assets/acb851e8-4963-4b52-8dfc-70e5d6133c93
 To build and run the application, use the following command:
 ```sh
 mvn javafx:run
+
+

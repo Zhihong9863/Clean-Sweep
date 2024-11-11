@@ -1,0 +1,38 @@
+language: java
+jdk:
+  - openjdk19
+
+# Cache dependencies to speed up builds
+cache:
+  directories:
+    - $HOME/.m2
+
+# Install dependencies
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y openjfx
+
+# Build and test
+script:
+  # Build the project
+  - mvn clean install --batch-mode --no-transfer-progress
+  
+  # Run unit tests
+  - mvn test --batch-mode --no-transfer-progress
+  
+  # Run JavaFX tests with virtual display
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
+  - mvn test -P ui-tests --batch-mode --no-transfer-progress
+
+# Only build these branches
+branches:
+  only:
+    - main
+    - develop
+
+# Environment variables (if needed)
+env:
+  global:
+    - MAVEN_OPTS="-Xmx2048m" 
