@@ -45,7 +45,7 @@ public class SensorSimulatorService implements Sensor {
                     int floorTypeRandom = random.nextInt(4);
                     switch (floorTypeRandom) {
                         case 0:
-                        case 1: //50% chance for BARE_FLOOR
+                        case 1: // 50% chance for BARE_FLOOR
                             cell.setFloorType(FloorType.BARE_FLOOR);
                             break;
                         case 2:
@@ -62,17 +62,17 @@ public class SensorSimulatorService implements Sensor {
     }
 
     /**
-     * Randomly generate obstacle grids.
-     * @param width Width
-     * @param height Grid height
-     * @return Randomly arrange a two-dimensional array of obstacles
+     * Randomly generates obstacle grids.
+     * @param width Width of the grid
+     * @param height Height of the grid
+     * @return A two-dimensional array representing obstacles
      */
     private boolean[][] generateObstacles(int width, int height) {
         boolean[][] grid = new boolean[width][height];
         Random random = new Random();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                if ((x==0 && y==0) || (x==0 && y==width-1) || (x==height-1 && y==0) || (x==height-1 && y==width-1)){
+                if ((x == 0 && y == 0) || (x == 0 && y == width - 1) || (x == height - 1 && y == 0) || (x == height - 1 && y == width - 1)) {
                     continue;
                 }
                 grid[x][y] = random.nextInt(7) == 0;
@@ -81,30 +81,20 @@ public class SensorSimulatorService implements Sensor {
         return grid;
     }
 
+    /**
+     * Generates charging station locations on the grid.
+     * @param width Width of the grid
+     * @param height Height of the grid
+     * @return A two-dimensional array representing charging stations
+     */
     private boolean[][] generateChargingStations(int width, int height) {
         boolean[][] grid = new boolean[width][height];
-        // Random random = new Random();
-        
-        // 确保(0,0)位置是充电站
+
         grid[0][0] = true;
-        grid[0][width-1] = true;
-        grid[height-1][0] = true;
-        grid[height-1][width-1] = true;
-        
-        // // 随机生成4-5个额外的充电站
-        // int numStations = random.nextInt(2) + 4; // 修改这里：4-5个额外充电站
-        // int stationsPlaced = 0;
-        
-        // while (stationsPlaced < numStations) {
-        //     int x = random.nextInt(width);
-        //     int y = random.nextInt(height);
-            
-        //     // 跳过(0,0)位置，确保不会与障碍物重叠，且位置未被占用
-        //     if (!(x == 0 && y == 0) && !obstacleGrid[x][y] && !grid[x][y]) {
-        //         grid[x][y] = true;
-        //         stationsPlaced++;
-        //     }
-        // }
+        grid[0][width - 1] = true;
+        grid[height - 1][0] = true;
+        grid[height - 1][width - 1] = true;
+               
         return grid;
     }
 
@@ -115,7 +105,7 @@ public class SensorSimulatorService implements Sensor {
 
     @Override
     public boolean isObstacle(int x, int y) {
-        return obstacleGrid[x][y]==true;
+        return obstacleGrid[x][y] == true;
     }
 
     @Override
@@ -149,6 +139,9 @@ public class SensorSimulatorService implements Sensor {
         }
     }
 
+    /**
+     * Checks if the specified coordinates are a charging station.
+     */
     public boolean isChargingStation(int x, int y) {
         return chargingStationGrid[x][y];
     }

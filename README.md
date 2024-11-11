@@ -1,14 +1,14 @@
 # Clean Sweep System
 
 **Group 8:** 
-	Dylan Neal
-	Huy Hoang Phan
-	Zhihong He
-	Faizan Moin Lateefuddin
+- Dylan Neal
+- Huy Hoang Phan
+- Zhihong He
+- Faizan Moin Lateefuddin
 
 The Clean Sweep project simulates an intelligent robotic vacuum designed to autonomously navigate and clean a typical household environment. Key features include obstacle avoidance, power management, dirt detection, and sensor simulation, making it a comprehensive system for robotic vacuum functionality.
 
-**Tech Stack**: Spring Boot, Javafx, Java  
+**Tech Stack**: Spring Boot, JavaFX, Java  
 **Architecture**: Modular and scalable, following clean architecture principles for separation of concerns.
 
 ## Project Overview
@@ -34,7 +34,7 @@ The Clean Sweep system consists of several core modules:
 - **LogEntryController**: Manages system logs (e.g., movements, cleaning actions, recharging).
 
 ### 4. Application (Services)
-- **NavigationService**: Controls vacuum navigation using BFS, handles obstacle avoidance.
+- **NavigationService**: Controls vacuum navigation using a modified DFS (Depth-First Search) algorithm combined with Dijkstra's algorithm for optimal pathfinding.
 - **BatteryService**: Manages battery consumption and recharging.
 - **DirtService**: Cleans detected dirt and updates the vacuum’s capacity.
 - **SensorSimulatorService**: Simulates sensor behavior for dirt, obstacles, and floor types.
@@ -44,7 +44,7 @@ The Clean Sweep system consists of several core modules:
 - **LogEntryRepository**: Persists log entries for system activity history.
 
 ### ***Frontend (Visualization)***
-- **FloorPlanVisualizer**: Renders the floor map, showing vacuum, obstacles, and dirt.
+- **FloorPlanVisualizer**: Renders the floor map, showing the vacuum, obstacles, and dirt.
 - **RobotVisualizer**: Visualizes the vacuum's movements and actions.
 - **HUDController**: Displays battery status, dirt level, and system status.
 
@@ -84,7 +84,7 @@ https://github.com/user-attachments/assets/acb851e8-4963-4b52-8dfc-70e5d6133c93
 
 ### Prerequisites
 - **Java 19**
-- **Javafx 20**
+- **JavaFX 20**
 - **Maven**
 
 ### Build and Run the Application

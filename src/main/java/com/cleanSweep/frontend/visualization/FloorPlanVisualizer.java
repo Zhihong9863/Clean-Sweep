@@ -29,6 +29,9 @@ public class FloorPlanVisualizer {
         this.cellSize = cellSize;
     }
 
+    /**
+     * Renders the floor plan, including cells, dirt, and obstacles.
+     */
     public void render(GraphicsContext gc) {
         // Render the grid
         for (int x = 0; x < gridSize; x++) {
@@ -87,6 +90,9 @@ public class FloorPlanVisualizer {
         renderColorLegend(gc);
     }
 
+    /**
+     * Renders the color legend for the floor types and status indicators.
+     */
     private void renderColorLegend(GraphicsContext gc) {
         gc.setFont(new Font(14));
 
@@ -100,20 +106,20 @@ public class FloorPlanVisualizer {
         // Battery Progress Bar
         double batteryPercentage = (double) batteryService.getBattery() / batteryService.getFullChargeValue();
         
-        // 绘制电池进度条背景
+        // Draw battery progress bar background
         gc.setFill(Color.GRAY);
         gc.fillRect(leftLegendX, legendStartY, barWidth, barHeight);
         
-        // 根据电量百分比设置颜色
+        // Set color based on battery percentage
         Color batteryColor;
         if (batteryPercentage > 0.75) {
-            batteryColor = Color.GREEN;  // 75-100% 绿色
+            batteryColor = Color.GREEN;  // 75-100% green
         } else if (batteryPercentage > 0.5) {
-            batteryColor = Color.ORANGE;  // 50-75% 橙色
+            batteryColor = Color.ORANGE;  // 50-75% orange
         } else if (batteryPercentage > 0.25) {
-            batteryColor = Color.YELLOW;  // 25-50% 黄色
+            batteryColor = Color.YELLOW;  // 25-50% yellow
         } else {
-            batteryColor = Color.RED;  // 0-25% 红色
+            batteryColor = Color.RED;  // 0-25% red
         }
         
         gc.setFill(batteryColor);
@@ -125,20 +131,20 @@ public class FloorPlanVisualizer {
         // Dirt Progress Bar
         double dirtPercentage = (double) dirtService.getCurrentCapacity() / dirtService.getDirtCapacity();
         
-        // 绘制垃圾进度条背景
+        // Draw dirt progress bar background
         gc.setFill(Color.GRAY);
         gc.fillRect(leftLegendX, legendStartY + entrySpacing, barWidth, barHeight);
         
-        // 根据垃圾容量百分比设置颜色
+        // Set color based on dirt capacity percentage
         Color dirtColor;
         if (dirtPercentage < 0.25) {
-            dirtColor = Color.GREEN;  // 0-25% 绿色
+            dirtColor = Color.GREEN;  // 0-25% green
         } else if (dirtPercentage < 0.5) {
-            dirtColor = Color.YELLOW;  // 25-50% 黄色
+            dirtColor = Color.YELLOW;  // 25-50% yellow
         } else if (dirtPercentage < 0.75) {
-            dirtColor = Color.ORANGE;  // 50-75% 橙色
+            dirtColor = Color.ORANGE;  // 50-75% orange
         } else {
-            dirtColor = Color.RED;  // 75-100% 红色
+            dirtColor = Color.RED;  // 75-100% red
         }
         
         gc.setFill(dirtColor);

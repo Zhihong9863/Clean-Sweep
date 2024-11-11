@@ -25,6 +25,9 @@ public class HUDController extends VBox {
         update();
     }
 
+    /**
+     * Updates the HUD with the current battery and dirt capacity status.
+     */
     public void update() {
         batteryLabel.setText("Battery: " + batteryService.getBattery() + "%");
         dirtCapacityLabel.setText("Dirt Capacity: "

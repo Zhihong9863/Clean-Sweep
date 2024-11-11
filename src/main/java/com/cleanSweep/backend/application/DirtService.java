@@ -31,6 +31,9 @@ public class DirtService {
 
     private int mode = 0; // 0 is cleaning, 1 is stop cleaning
 
+    /**
+     * Cleans dirt at the specified coordinates if dirt is present and capacity allows.
+     */
     public void cleanDirt(int x, int y) {
         Cell cell = floorMap.getCells()[x][y];
         int dirtLevel = cell.getDirtLevel();
@@ -47,26 +50,44 @@ public class DirtService {
         }
     }
 
-    public void removeDirt(){
+    /**
+     * Resets the current dirt capacity to zero.
+     */
+    public void removeDirt() {
         currentCapacity = 0;
     }
 
-    public void setCleaningMode(){
+    /**
+     * Sets the service to cleaning mode.
+     */
+    public void setCleaningMode() {
         mode = 0;
     }
 
-    public void stopCleaningMode(){
+    /**
+     * Stops the cleaning mode.
+     */
+    public void stopCleaningMode() {
         mode = 1;
     }
 
-    public boolean isCleaningActive(){
+    /**
+     * Checks if the cleaning mode is active.
+     */
+    public boolean isCleaningActive() {
         return mode == 0;
     }
 
-    public boolean isFullDirt(){
-        return currentCapacity>=dirtCapacity;
+    /**
+     * Checks if the dirt capacity is full.
+     */
+    public boolean isFullDirt() {
+        return currentCapacity >= dirtCapacity;
     }
 
+    /**
+     * Checks if dirt is present at the specified coordinates using the sensor.
+     */
     public boolean isDirtPresent(int x, int y) {
         return sensorSimulatorService.isDirtPresent(x, y);
     }

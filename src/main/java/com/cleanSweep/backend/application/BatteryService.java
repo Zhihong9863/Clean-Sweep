@@ -28,6 +28,10 @@ public class BatteryService {
         this.battery = fullChargeValue;  // Initialize after dependency injection is completed
     }
 
+    /**
+     * Consumes a specified amount of power from the battery.
+     * If the battery is insufficient, it triggers a recharge.
+     */
     public void consumePower(int units) {
         if (battery > units) {
             battery -= units;
@@ -38,20 +42,31 @@ public class BatteryService {
         }
     }
 
-    // need to recharge battery if current battery <= battery needed to reach the charging station + 4
-    public boolean isRechargeNeeded(int batteryToReachStation){
+    /**
+     * Checks if a recharge is needed based on the current battery level
+     * and the battery needed to reach the charging station.
+     */
+    public boolean isRechargeNeeded(int batteryToReachStation) {
         return battery <= batteryToReachStation + 4 || battery <= fullChargeValue * 0.3;
     }
 
-
+    /**
+     * Checks if the battery is depleted.
+     */
     public boolean isBatteryDepleted() {
         return battery <= 0;
     }
 
+    /**
+     * Checks if the battery has sufficient power above the low threshold.
+     */
     public boolean hasSufficientPower() {
         return battery > lowBatteryThreshold;
     }
 
+    /**
+     * Recharges the battery to its full capacity.
+     */
     public void recharge() {
         battery = fullChargeValue;
         activityLogger.logRecharge();

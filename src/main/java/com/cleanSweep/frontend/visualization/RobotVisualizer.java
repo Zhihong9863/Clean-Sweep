@@ -14,6 +14,9 @@ public class RobotVisualizer {
         this.cellSize = cellSize;
     }
 
+    /**
+     * Renders the robot's current position on the canvas.
+     */
     public void render(GraphicsContext gc) {
         int[] position = navigationService.getCurrentPosition();
         gc.setFill(Color.BLUE);

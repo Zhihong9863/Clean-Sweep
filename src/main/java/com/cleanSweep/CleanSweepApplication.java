@@ -53,7 +53,7 @@ public class CleanSweepApplication extends Application {
         Canvas canvas = new Canvas(gridSize * cellSize, gridSize * cellSize + 150); // 150 is reserved space for legends
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        // Passing dependencies to FloorPlanVisualizer and RobotFisualizer
+        // Passing dependencies to FloorPlanVisualizer and RobotVisualizer
         FloorPlanVisualizer floorPlanVisualizer = new FloorPlanVisualizer(sensorSimulatorService, dirtService, batteryService, floorMap, gridSize, cellSize);
         RobotVisualizer robotVisualizer = new RobotVisualizer(navigationService, cellSize);
 
@@ -73,6 +73,10 @@ public class CleanSweepApplication extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Creates a control panel with Start and Stop buttons for the simulation.
+     * Initializes the navigation service and starts the animation.
+     */
     private HBox getBox(NavigationService navigationService, GraphicsContext gc, FloorPlanVisualizer floorPlanVisualizer, RobotVisualizer robotVisualizer) {
         Button startButton = new Button("Start");
         Button stopButton = new Button("Stop");
@@ -88,6 +92,9 @@ public class CleanSweepApplication extends Application {
         return controls;
     }
 
+    /**
+     * Starts the animation timer to update the robot's state and render the visuals.
+     */
     private void startAnimation(GraphicsContext gc, FloorPlanVisualizer floorPlanVisualizer,
                                 RobotVisualizer robotVisualizer, NavigationService navigationService) {
         timer = new AnimationTimer() {
@@ -95,10 +102,10 @@ public class CleanSweepApplication extends Application {
 
             @Override
             public void handle(long now) {
-                if (now - lastUpdate >= 500_000_000) {  // 每500ms更新一次
-                    navigationService.stepNavigation();  // 更新机器人状态
+                if (now - lastUpdate >= 500_000_000) {  // Update every 500ms
+                    navigationService.stepNavigation();  // Update the robot's state
                     
-                    // 渲染当前状态
+                    // Render current state
                     gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
                     floorPlanVisualizer.render(gc);
                     robotVisualizer.render(gc);
@@ -106,7 +113,7 @@ public class CleanSweepApplication extends Application {
                     lastUpdate = now;
 
                     if (navigationService.isNavigationCompleted()) {
-                        stopAnimation();
+                        stopAnimation();  // Stop animation when navigation is completed
                     }
                 }
             }
@@ -114,6 +121,9 @@ public class CleanSweepApplication extends Application {
         timer.start();
     }
 
+    /**
+     * Stops the animation timer when the simulation is completed.
+     */
     private void stopAnimation() {
         if (timer != null) {
             timer.stop();

@@ -4,9 +4,6 @@ import com.cleanSweep.backend.domain.Cell;
 import com.cleanSweep.backend.domain.FloorMap;
 import com.cleanSweep.backend.common.Direction;
 import com.cleanSweep.backend.infrastructure.ActivityLogger;
-import com.cleanSweep.frontend.visualization.FloorPlanVisualizer;
-import com.cleanSweep.frontend.visualization.RobotVisualizer;
-import javafx.scene.canvas.GraphicsContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,13 +42,11 @@ public class NavigationService {
     private Deque<Cell> stack = new ArrayDeque<>();
     private List<int[]> stationPath = new ArrayList<>();
     private int stationIdx;
-    private int stationDist;
 
     private boolean isNavigationCompleted = false;
     private int currentX = 0;
     private int currentY = 0;
 
-    // 添加新的字段来存储最后清扫的位置
     private int lastCleaningX;
     private int lastCleaningY;
     private boolean isReturningFromStation = false;
@@ -132,7 +127,7 @@ public class NavigationService {
         String direction = isReturningFromStation ? "Returning to cleaning position" : "Moving to charging station";
         activityLogger.logMovement(currentX, currentY, direction);
 
-        // 到达充电站且不是在返回途中
+        // Arriving at the charging station and not on the way back
         if (isAtAnyChargingStation() && !isReturningFromStation) {
             dirtService.removeDirt();
             batteryService.recharge();
@@ -142,15 +137,15 @@ public class NavigationService {
                 stationPath = null;
                 stationIdx = 0;
             } else {
-                // 准备返回最后清扫的位置
+                // Prepare to return to the final cleaning location
                 dirtService.setCleaningMode();
                 Cell lastCleaningCell = floorMap.getCells()[lastCleaningX][lastCleaningY];
                 stationPath = new ArrayList<>(lastCleaningCell.getWayToChargingStation());
                 stationIdx = 0;
-                isReturningFromStation = true;  // 标记正在返回
+                isReturningFromStation = true; 
             }
         } else if (isReturningFromStation && currentX == lastCleaningX && currentY == lastCleaningY) {
-            // 已返回到最后清扫的位置
+            // Returned to the last cleaning position
             stationPath = null;
             stationIdx = 0;
             isReturningFromStation = false;
@@ -197,9 +192,9 @@ public class NavigationService {
             dirtService.cleanDirt(currentX, currentY);
         }
 
-        // 检查是否需要返回充电站
+        // Check if returning to the charging station is needed
         if (dirtService.isFullDirt() || batteryService.isRechargeNeeded(getBatteryNeededToNearestStation())) {
-            // 存储最后清扫的位置
+            // Store the last cleaning position
             lastCleaningX = currentX;
             lastCleaningY = currentY;
             
@@ -207,7 +202,7 @@ public class NavigationService {
             Cell nearestStation = findNearestChargingStationCell(currentX, currentY);
             if (nearestStation != null) {
                 stationPath = new ArrayList<>(currentCell.getWayToChargingStation());
-                Collections.reverse(stationPath);  // 反转路径以便前往充电站
+                Collections.reverse(stationPath);  // Reverse the path to reach the charging station
                 stationIdx = 0;
                 isReturningFromStation = false;
                 return;
@@ -460,7 +455,7 @@ public class NavigationService {
         List<int[]> pathToStation = floorMap.getCells()[currentX][currentY].getWayToChargingStation();
         if (pathToStation == null) return Integer.MAX_VALUE;
         
-        return pathToStation.size() * 2; // 考虑路径上每个格子的基本消耗
+        return pathToStation.size() * 2; // Consider the basic consumption of each cell in the path
     }
 
     /**

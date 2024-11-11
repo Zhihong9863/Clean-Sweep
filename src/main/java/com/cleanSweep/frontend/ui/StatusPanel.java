@@ -15,10 +15,16 @@ public class StatusPanel extends VBox {
         this.getChildren().addAll(batteryStatusLabel, dirtCapacityLabel);
     }
 
+    /**
+     * Updates the battery status label with the current battery life.
+     */
     public void updateBatteryStatus(int batteryLife) {
         batteryStatusLabel.setText("Battery: " + batteryLife + "%");
     }
 
+    /**
+     * Updates the dirt capacity label with the current and maximum dirt capacity.
+     */
     public void updateDirtCapacity(int currentDirt, int maxDirtCapacity) {
         dirtCapacityLabel.setText("Dirt Capacity: " + currentDirt + " / " + maxDirtCapacity);
     }
